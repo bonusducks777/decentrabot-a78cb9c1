@@ -21,7 +21,7 @@ export const ControlPanel = () => {
       if (isConnected && address) {
         try {
           const controller = await blockchainUtils.isController();
-          setIsCurrentController(controller);
+          setIsCurrentController(!!controller);
         } catch (error) {
           console.error("Error checking controller status:", error);
         }

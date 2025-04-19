@@ -1,16 +1,21 @@
-
 "use client"
 
 import { useAccount, usePublicClient, useWalletClient } from "wagmi"
 import { parseEther, formatEther } from "viem"
 import { useState, useEffect } from "react"
-import { readContract, writeContract } from "@wagmi/core"
+import { readContract, writeContract, sendTransaction } from "@wagmi/core"
+
+type LeaderboardEntry = {
+  address: string;
+  stake: string;
+  timeRemaining: string;
+}
 
 // Contract ABI - This would be generated from your Solidity contract
 // This is a simplified version for demonstration
 const CONTRACT_ABI = [
   // Read functions
-  "function getUserBalance(address user) view returns (uint256)",
+  "function getStakedBalance(address user) view returns (uint256)",
   "function getHighestStaker() view returns (address)",
   "function isController(address user) view returns (bool)",
   "function getBotFee() view returns (uint256)",
@@ -22,7 +27,7 @@ const CONTRACT_ABI = [
   "function getAllRobotIds() view returns (string[] memory)",
 
   // Write functions
-  "function stakeTokens(uint256 amount)",
+  "function stakeTokens() payable",
   "function withdrawTokens(uint256 amount)",
   "function sendCommand(string robotId, string command)",
 ]
@@ -30,14 +35,13 @@ const CONTRACT_ABI = [
 // Contract address - Replace with your deployed contract address
 export const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-// Blockchain functions for the entire application
 export const useBlockchainUtils = () => {
   const { address, isConnected } = useAccount()
   const publicClient = usePublicClient()
   const { data: walletClient } = useWalletClient()
 
-  const [cachedLeaderboard, setCachedLeaderboard] = useState([])
-  const [cachedRobotIds, setCachedRobotIds] = useState([])
+  const [cachedLeaderboard, setCachedLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [cachedRobotIds, setCachedRobotIds] = useState<string[]>([])
 
   // Fetch robot IDs on component mount
   useEffect(() => {
@@ -65,7 +69,7 @@ export const useBlockchainUtils = () => {
 
   // ========== STAKING OPERATIONS ==========
 
-  const stakeTokens = async (amount) => {
+  const stakeTokens = async (amount: string) => {
     if (!isConnected || !walletClient) {
       console.error("Wallet not connected")
       return false
@@ -74,11 +78,11 @@ export const useBlockchainUtils = () => {
     try {
       const amountInWei = parseEther(amount)
 
-      const tx = await writeContract({
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "stakeTokens",
-        args: [amountInWei],
+      // Send native tokens to the contract
+      const tx = await sendTransaction({
+        to: CONTRACT_ADDRESS,
+        value: amountInWei,
+        data: "0x", // Call the receive function
       })
 
       console.log("Staking transaction:", tx)
@@ -124,7 +128,7 @@ export const useBlockchainUtils = () => {
       const balance = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
-        functionName: "getUserBalance",
+        functionName: "getStakedBalance",
         args: [address],
       })
 
@@ -186,15 +190,13 @@ export const useBlockchainUtils = () => {
         functionName: "getBotFee",
       })
 
-      // Convert from wei (1e18) to DOT
+      // Convert from wei (1e18) to WND
       return formatEther(fee)
     } catch (error) {
       console.error("Error getting bot fee:", error)
       return "2.5"
     }
   }
-
-  // ========== ROBOT STATUS AND INTERACTIONS ==========
 
   const getRobotLocation = async (robotId) => {
     if (!publicClient) {
@@ -422,48 +424,7 @@ export const useBlockchainUtils = () => {
     sendRobotCommand,
     getTimeRemaining,
     getLeaderboard,
-    cachedRobotIds,
   }
 }
-
-/*
-Required Smart Contract Functionality:
-
-1. Staking System:
-   - stakeTokens(uint256 amount) - Allow users to stake WND tokens
-   - withdrawTokens(uint256 amount) - Allow users to withdraw their staked tokens
-   - getUserBalance(address user) - Get user's staked balance
-   - getTotalStaked() - Get total staked tokens
-   - getHighestStaker() - Get address of highest staker
-   - getStakingLeaderboard(uint256 count) - Get top stakers sorted by amount
-
-2. Robot Control:
-   - isController(address user) - Check if user is current controller
-   - verifyControl(bytes signature) - Verify controller's signature
-   - transferControl(address newController) - Transfer control to new highest staker
-   - getBotFee() - Get current fee rate in WND/hour
-   - setBotFee(uint256 newFee) - Admin function to update fee rate
-
-3. Robot Commands:
-   - sendCommand(string robotId, string command) - Send movement command to robot
-   - getRobotStatus(string robotId) - Get robot's current status
-   - updateRobotLocation(string robotId, int256 lat, int256 lng) - Update robot location
-   - updateBatteryLevel(string robotId, uint256 level) - Update robot battery level
-   - updateUptime(string robotId, uint256 uptime) - Update robot uptime
-   - getAllRobotIds() - Get all available robot IDs
-
-4. Events:
-   - StakeAdded(address user, uint256 amount)
-   - StakeWithdrawn(address user, uint256 amount)
-   - ControllerChanged(address oldController, address newController)
-   - CommandSent(address controller, string robotId, string command)
-   - RobotStatusUpdated(string robotId, uint256 batteryLevel, uint256 uptime)
-   - FeeUpdated(uint256 oldFee, uint256 newFee)
-
-5. Admin Functions:
-   - setEmergencyStop(bool stopped) - Emergency stop for critical functions
-   - withdrawFees() - Admin function to withdraw accumulated fees
-   - updateRobotConfig(string robotId, uint256[] config) - Update robot configuration
-*/
 
 export default useBlockchainUtils

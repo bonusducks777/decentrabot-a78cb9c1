@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
@@ -27,10 +26,9 @@ export const StakeDashboard = () => {
           const balance = await blockchainUtils.getUserBalance();
           setUserBalance(balance);
           
-          const highestStaker = await blockchainUtils.getHighestStaker();
-          setTopStaker(highestStaker.slice(0, 6) + '...' + highestStaker.slice(-4));
+          const highestStaker = await blockchainUtils.getHighestStaker() as string;
+          setTopStaker(highestStaker ? `${highestStaker.slice(0, 6)}...${highestStaker.slice(-4)}` : "0x0000...0000");
           
-          // For demo purposes, we'll set a fixed top stake
           setTopStake("125.5");
         } catch (error) {
           console.error("Error fetching stake data:", error);
@@ -58,7 +56,6 @@ export const StakeDashboard = () => {
       if (success) {
         toast.success(`Successfully staked ${stakeAmount} WND`);
         setStakeAmount("");
-        // Update the balance (mock for now)
         setUserBalance((parseFloat(userBalance) + parseFloat(stakeAmount)).toFixed(1));
       } else {
         toast.error("Staking failed");
@@ -93,7 +90,6 @@ export const StakeDashboard = () => {
       if (success) {
         toast.success(`Successfully withdrawn ${withdrawAmount} WND`);
         setWithdrawAmount("");
-        // Update the balance (mock for now)
         setUserBalance((parseFloat(userBalance) - parseFloat(withdrawAmount)).toFixed(1));
       } else {
         toast.error("Withdrawal failed");
