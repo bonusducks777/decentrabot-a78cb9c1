@@ -49,9 +49,9 @@ export const StakingLeaderboard = () => {
         </TableHeader>
         <TableBody>
           {leaderboardData.map((entry) => (
-            <TableRow key={entry.position} className={entry.isCurrentUser ? "bg-cyber-blue/10" : ""}>
+            <TableRow key={entry.position} className={entry.isCurrentUser ? "bg-orange-500/10" : ""}>
               <TableCell className="font-medium">{entry.position}</TableCell>
-              <TableCell className={entry.isCurrentUser ? "text-cyber-cyan" : ""}>
+              <TableCell className={entry.isCurrentUser ? "text-orange-400" : ""}>
                 {entry.address}
                 {entry.position === 1 && (
                   <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded-full">
@@ -67,10 +67,10 @@ export const StakingLeaderboard = () => {
       
       <div className="mt-4 p-3 bg-background/50 rounded-md border border-border flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm">
-          <Clock className="h-4 w-4 text-cyber-cyan" />
+          <Clock className="h-4 w-4 text-orange-400" />
           Current session ends in:
         </div>
-        <div className="font-mono text-cyber-cyan">
+        <div className="font-mono text-orange-400">
           {timeRemaining.hours}h {timeRemaining.minutes}m
         </div>
       </div>

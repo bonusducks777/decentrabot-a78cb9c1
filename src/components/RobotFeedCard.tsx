@@ -14,8 +14,8 @@ interface RobotFeedCardProps {
   batteryLevel: number;
   uptime: string;
   operatorCount: number;
-  topStake: number;
-  chargeRate: number;
+  topStake?: number;
+  chargeRate?: number;
 }
 
 export const RobotFeedCard = ({
@@ -27,8 +27,8 @@ export const RobotFeedCard = ({
   batteryLevel,
   uptime,
   operatorCount,
-  topStake,
-  chargeRate
+  topStake = 0,
+  chargeRate = 0
 }: RobotFeedCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group neo-card">

@@ -19,13 +19,13 @@ export const LiveLogFeed = () => {
     <Card className="neo-card">
       <div className="p-6">
         <h3 className="text-xl font-bold mb-4">Live Activity Log</h3>
-        <ScrollArea className="h-[300px] rounded-md border">
+        <ScrollArea className="h-[200px] rounded-md border">
           <div className="p-4">
             {logs.map((log, index) => (
               <div 
                 key={index} 
                 className={`py-2 px-3 ${index % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
-                  rounded-md mb-1 flex justify-between ${index === 0 ? 'border-l-2 border-cyber-cyan' : ''}`}
+                  rounded-md mb-1 flex justify-between ${index === 0 ? 'border-l-2 border-orange-400' : ''}`}
               >
                 <span className="text-sm font-mono">{log.time}</span>
                 <span className="text-sm">{log.action}</span>

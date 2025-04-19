@@ -37,7 +37,7 @@ export const RobotStatus = ({
           <div className="flex items-center gap-2">
             <div className="h-2 w-24 bg-gray-200 rounded-full">
               <div 
-                className="h-full bg-green-500 rounded-full"
+                className="h-full bg-orange-500 rounded-full"
                 style={{ width: `${batteryLevel}%` }}
               />
             </div>
@@ -50,7 +50,7 @@ export const RobotStatus = ({
             <Activity className="text-muted-foreground h-4 w-4" />
             Charge Rate
           </span>
-          <span className="text-sm text-cyber-cyan">{chargeRate} DOT/hr</span>
+          <span className="text-sm text-orange-400">{chargeRate} DOT/hr</span>
         </div>
         
         <div className="flex justify-between items-center">

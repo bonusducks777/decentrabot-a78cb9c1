@@ -53,9 +53,9 @@ export const ChatSystem = () => {
   };
 
   return (
-    <Card className="neo-card">
-      <div className="p-6">
-        <h3 className="text-xl font-bold mb-4">Community Chat</h3>
+    <Card className="neo-card flex flex-col h-full">
+      <div className="p-4">
+        <h3 className="text-xl font-bold mb-2">Community Chat</h3>
         <ScrollArea className="h-[300px] rounded-md border mb-4">
           <div className="p-4">
             {messages.map((msg) => (
@@ -65,7 +65,7 @@ export const ChatSystem = () => {
                   rounded-md mb-1`}
               >
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-mono text-cyber-cyan">{msg.address}</span>
+                  <span className="text-sm font-mono text-orange-400">{msg.address}</span>
                   <span className="text-xs text-muted-foreground">{formatTimestamp(msg.timestamp)}</span>
                 </div>
                 <p className="text-sm">{msg.message}</p>

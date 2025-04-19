@@ -1,5 +1,7 @@
 
 import { useAccount } from "wagmi";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ControlPanel } from "@/components/ControlPanel";
@@ -13,6 +15,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const AppPage = () => {
   const { isConnected } = useAccount();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedRobot, setSelectedRobot] = useState(searchParams.get("robot") || "robot-1");
+  
+  useEffect(() => {
+    if (selectedRobot) {
+      setSearchParams({ robot: selectedRobot });
+    }
+  }, [selectedRobot, setSearchParams]);
   
   const robots = [
     { id: "robot-1", name: "Warehouse Bot Alpha" },
@@ -23,13 +33,17 @@ const AppPage = () => {
     { id: "robot-6", name: "Cleaning Bot" },
   ];
 
+  const handleRobotChange = (value: string) => {
+    setSelectedRobot(value);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 py-8 container">
+      <main className="flex-1 py-6 container">
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-3xl font-bold glow">Bot Control Center</h1>
-          <Select defaultValue="robot-1">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Bot Control Center</h1>
+          <Select value={selectedRobot} onValueChange={handleRobotChange}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select robot" />
             </SelectTrigger>
@@ -43,31 +57,38 @@ const AppPage = () => {
           </Select>
         </div>
         
-        <div className="grid grid-cols-12 gap-6">
-          {isConnected ? (
-            <>
-              <div className="col-span-8">
-                <RobotCameraFeed showBotSelector={false} />
-                <div className="mt-6">
-                  <ControlPanel />
-                </div>
-                <div className="grid grid-cols-2 gap-6 mt-6">
-                  <RobotStatus />
-                  <StakingLeaderboard />
-                </div>
-              </div>
-              <div className="col-span-4 space-y-6">
-                <ChatSystem />
-                <StakeDashboard />
-                <LiveLogFeed />
-              </div>
-            </>
-          ) : (
-            <div className="col-span-12">
-              <RobotCameraFeed showBotSelector={false} />
+        {isConnected ? (
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12 lg:col-span-8">
+              <RobotCameraFeed />
             </div>
-          )}
-        </div>
+            <div className="col-span-12 lg:col-span-4">
+              <ChatSystem />
+            </div>
+            <div className="col-span-12 lg:col-span-8">
+              <ControlPanel />
+            </div>
+            <div className="col-span-12 lg:col-span-4">
+              <StakeDashboard />
+            </div>
+            <div className="col-span-12 lg:col-span-6">
+              <RobotStatus />
+            </div>
+            <div className="col-span-12 lg:col-span-6">
+              <StakingLeaderboard />
+            </div>
+            <div className="col-span-12">
+              <LiveLogFeed />
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-10 bg-card rounded-lg border border-border">
+            <h2 className="text-2xl font-bold mb-4">Connect Your Wallet</h2>
+            <p className="text-center max-w-md mb-6">
+              Please connect your wallet to view the robot feed and control panel.
+            </p>
+          </div>
+        )}
       </main>
       <Footer />
     </div>

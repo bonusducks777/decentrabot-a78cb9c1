@@ -17,31 +17,31 @@ export const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2">
-            <span className="font-bold text-2xl bg-gradient-to-r from-cyber-blue to-cyber-cyan bg-clip-text text-transparent">
+            <span className="font-bold text-2xl bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">
               DECENTRABOT
             </span>
-            <span className="text-xs px-2 py-1 rounded-full bg-cyber-blue/20 text-cyber-cyan">Moonbeam</span>
+            <span className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400">Moonbeam</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <Link 
               to="/" 
-              className={`transition-colors ${location.pathname === '/' 
-                ? 'text-cyber-cyan font-semibold' 
-                : 'text-foreground/80 hover:text-foreground'}`}
+              className={`transition-colors hover:text-orange-400 ${location.pathname === '/' 
+                ? 'text-orange-400 font-semibold' 
+                : 'text-foreground/80'}`}
             >
               Home
             </Link>
             <Link 
               to="/app" 
-              className={`transition-colors ${location.pathname === '/app' 
-                ? 'text-cyber-cyan font-semibold' 
-                : 'text-foreground/80 hover:text-foreground'}`}
+              className={`transition-colors hover:text-orange-400 ${location.pathname === '/app' 
+                ? 'text-orange-400 font-semibold' 
+                : 'text-foreground/80'}`}
             >
               App
             </Link>
             <a 
               href="#" 
-              className="text-foreground/80 hover:text-foreground transition-colors"
+              className="text-foreground/80 hover:text-orange-400 transition-colors"
               target="_blank" 
               rel="noopener noreferrer"
             >
@@ -49,7 +49,7 @@ export const Navbar = () => {
             </a>
             <a 
               href="https://github.com" 
-              className="text-foreground/80 hover:text-foreground transition-colors"
+              className="text-foreground/80 hover:text-orange-400 transition-colors"
               target="_blank" 
               rel="noopener noreferrer"
             >
@@ -59,7 +59,7 @@ export const Navbar = () => {
         </div>
         <div className="flex items-center gap-4">
           {isConnected && (
-            <Badge variant="outline" className="border-cyber-cyan bg-cyber-blue/10 text-cyber-cyan">
+            <Badge variant="outline" className="border-orange-400 bg-orange-500/10 text-orange-400">
               Balance: {platformBalance} DOT
             </Badge>
           )}
