@@ -9,18 +9,18 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 // RainbowKit imports
 import '@rainbow-me/rainbowkit/styles.css';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
-import { chains, wagmiConfig } from './config/web3Config';
+import { WagmiProvider } from 'wagmi';
+import { config } from './config/web3Config';
 
 import Index from "./pages/Index";
-import Bot from "./pages/Bot";
+import AppPage from "./pages/AppPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider chains={chains}>
+  <WagmiProvider config={config}>
+    <RainbowKitProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark">
           <TooltipProvider>
@@ -29,8 +29,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/bot" element={<Bot />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="/app" element={<AppPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
@@ -38,7 +37,8 @@ const App = () => (
         </ThemeProvider>
       </QueryClientProvider>
     </RainbowKitProvider>
-  </WagmiConfig>
+  </WagmiProvider>
 );
 
 export default App;
+

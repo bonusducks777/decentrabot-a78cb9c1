@@ -1,30 +1,19 @@
 
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig } from 'wagmi';
-import { mainnet, moonbeam } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { walletConnectProvider } from '@rainbow-me/rainbowkit/walletConnectProvider';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { moonbeam, mainnet } from 'wagmi/chains';
+import { http } from 'wagmi';
 
 const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
 
-const { chains, publicClient } = configureChains(
-  [moonbeam, mainnet],
-  [
-    walletConnectProvider({ projectId }),
-    publicProvider()
-  ]
-);
-
-const { connectors } = getDefaultWallets({
+export const config = getDefaultConfig({
   appName: 'Decentrabot',
   projectId,
-  chains
+  chains: [moonbeam, mainnet],
+  transports: {
+    [moonbeam.id]: http(),
+    [mainnet.id]: http(),
+  },
 });
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient
-});
+export const { chains, publicClient, webSocketPublicClient } = config;
 
-export { chains, wagmiConfig };

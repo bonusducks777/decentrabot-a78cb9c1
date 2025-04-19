@@ -1,5 +1,4 @@
-
-import { ethers } from 'ethers';
+import { PublicClient } from 'wagmi';
 
 // Placeholder for actual contract address
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -17,10 +16,9 @@ const CONTRACT_ABI = [
 
 // Placeholder functions to interact with the smart contract
 export const useContractFunctions = () => {
-  const getContract = async (provider: any) => {
+  const getContract = async (publicClient: PublicClient) => {
     try {
-      const signer = provider.getSigner();
-      return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      return publicClient;
     } catch (error) {
       console.error('Error getting contract:', error);
       return null;

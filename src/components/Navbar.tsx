@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -17,8 +16,8 @@ export const Navbar = () => {
             <Link to="/" className="text-foreground/80 hover:text-foreground transition-colors">
               Home
             </Link>
-            <Link to="/bot" className="text-foreground/80 hover:text-foreground transition-colors">
-              Bot
+            <Link to="/app" className="text-foreground/80 hover:text-foreground transition-colors">
+              App
             </Link>
             <a 
               href="#" 
