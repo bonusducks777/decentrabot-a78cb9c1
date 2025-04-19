@@ -14,10 +14,10 @@ interface RainbowKitWrapperProps {
 // WalletConnect Project ID
 const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
 
-// Define the Westend testnet
-const westend = {
-  id: 42262,
-  name: 'Westend',
+// Define the Asset-Hub Westend testnet
+const westendAssetHub = {
+  id: 420420421,
+  name: 'Asset-Hub Westend Testnet',
   nativeCurrency: {
     name: 'Westend',
     symbol: 'WND',
@@ -25,23 +25,23 @@ const westend = {
   },
   rpcUrls: {
     default: {
-      http: ['https://westend-rpc.dwellir.com'],
+      http: ['https://westend-asset-hub-eth-rpc.polkadot.io'],
     },
     public: {
-      http: ['https://westend-rpc.dwellir.com'],
+      http: ['https://westend-asset-hub-eth-rpc.polkadot.io'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Westend Subscan',
-      url: 'https://westend.subscan.io',
+      name: 'Blockscout',
+      url: 'https://blockscout-asset-hub.parity-chains-scw.parity.io',
     },
   },
   testnet: true,
 } as const;
 
-// Chain configuration with Westend for Polkadot ecosystem
-const chains = [westend] as const;
+// Chain configuration with Asset-Hub Westend for Polkadot ecosystem
+const chains = [westendAssetHub] as const;
 
 // Get wallets using the proper API for RainbowKit v2
 const { connectors } = getDefaultWallets({
@@ -53,7 +53,7 @@ const { connectors } = getDefaultWallets({
 const config = createConfig({
   chains,
   transports: {
-    [westend.id]: http(),
+    [westendAssetHub.id]: http(),
   },
   connectors,
 });

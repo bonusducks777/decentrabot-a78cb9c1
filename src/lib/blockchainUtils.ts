@@ -55,11 +55,10 @@ export const useBlockchainUtils = () => {
   // Fetch robot IDs from the contract
   const fetchRobotIds = async () => {
     try {
-      const robotIds = await readContract(config, {
+      const robotIds = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getAllRobotIds",
-        // Use chainId instead of chain
         chainId: config.chains[0].id,
       }) as string[]
 
@@ -83,11 +82,11 @@ export const useBlockchainUtils = () => {
       const amountInWei = parseEther(amount)
 
       // Send native tokens to the contract
-      const tx = await sendTransaction(config, {
+      const tx = await sendTransaction({
         to: CONTRACT_ADDRESS,
         value: amountInWei,
         data: "0x", // Call the receive function
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       })
 
       console.log("Staking transaction:", tx)
@@ -107,13 +106,13 @@ export const useBlockchainUtils = () => {
     try {
       const amountInWei = parseEther(amount)
 
-      const tx = await writeContract(config, {
+      const tx = await writeContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "withdrawTokens",
         args: [amountInWei],
-        chainId: config.chains[0].id, // Use chainId instead of chain
-        account: address, // Add the account parameter
+        chainId: config.chains[0].id,
+        account: address,
       })
 
       console.log("Withdrawal transaction:", tx)
@@ -132,12 +131,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const balance = await readContract(config, {
+      const balance = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakedBalance",
         args: [address],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as bigint
 
       return formatEther(balance)
@@ -153,11 +152,11 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const highestStaker = await readContract(config, {
+      const highestStaker = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getHighestStaker",
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       })
 
       return highestStaker
@@ -173,12 +172,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const controller = await readContract(config, {
+      const controller = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "isController",
         args: [address],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as boolean
 
       return controller
@@ -194,11 +193,11 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const fee = await readContract(config, {
+      const fee = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getBotFee",
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as bigint
 
       // Convert from wei (1e18) to WND
@@ -231,12 +230,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const location = await readContract(config, {
+      const location = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotLocation",
         args: [robotId],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as [bigint, bigint]
 
       return {
@@ -271,12 +270,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const batteryLevel = await readContract(config, {
+      const batteryLevel = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotBatteryLevel",
         args: [robotId],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as bigint
 
       return Number(batteryLevel)
@@ -294,12 +293,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const uptimeSeconds = await readContract(config, {
+      const uptimeSeconds = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotUptime",
         args: [robotId],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -322,13 +321,13 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const tx = await writeContract(config, {
+      const tx = await writeContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "sendCommand",
         args: [robotId, command],
-        chainId: config.chains[0].id, // Use chainId instead of chain
-        account: address, // Add the account parameter
+        chainId: config.chains[0].id,
+        account: address,
       })
 
       console.log(`Command sent to ${robotId}:`, command)
@@ -348,12 +347,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const timeRemainingSeconds = await readContract(config, {
+      const timeRemainingSeconds = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getTimeRemaining",
         args: [userAddress],
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -379,12 +378,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const result = await readContract(config, {
+      const result = await readContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakingLeaderboard",
         args: [5], // Get top 5 stakers
-        chainId: config.chains[0].id, // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as [string[], bigint[]]
 
       const addresses = result[0]
