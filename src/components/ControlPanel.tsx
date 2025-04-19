@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { useAccount, usePublicClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 export const ControlPanel = () => {
@@ -13,6 +14,7 @@ export const ControlPanel = () => {
   const [loading, setLoading] = useState(false);
   const [lastCommand, setLastCommand] = useState("");
   const [selectedRobotId, setSelectedRobotId] = useState("robot-1");
+  const [showVerifyDialog, setShowVerifyDialog] = useState(false);
 
   const blockchainUtils = useBlockchainUtils();
 
@@ -21,7 +23,10 @@ export const ControlPanel = () => {
       if (isConnected && address) {
         try {
           const controller = await blockchainUtils.isController();
-          setIsCurrentController(!!controller);
+          setIsCurrentController(false); // Hardcoded to false for now
+          if (controller) {
+            setShowVerifyDialog(true);
+          }
         } catch (error) {
           console.error("Error checking controller status:", error);
         }
@@ -37,10 +42,9 @@ export const ControlPanel = () => {
   const handleVerifyControl = async () => {
     setLoading(true);
     try {
-      // In a real app, this would be a signature verification
-      // For now, we'll just mock it
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsVerified(true);
+      setShowVerifyDialog(false);
       toast.success("Control verified successfully");
     } catch (error) {
       console.error("Error verifying control:", error);
@@ -74,21 +78,11 @@ export const ControlPanel = () => {
   };
 
   return (
-    <Card className={`neo-card p-3 mt-4 mb-4 transition-all duration-300 hover:shadow-lg animate-fade-in ${!isCurrentController ? 'opacity-70' : ''}`}>
+    <Card className="neo-card p-3 mt-4 mb-4 transition-all duration-300 hover:shadow-lg animate-fade-in relative">
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="lg:w-2/3">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
-            {isCurrentController && (
-              <Button 
-                variant={isVerified ? "outline" : "default"}
-                className={`transition-all duration-300 ${isVerified ? 'bg-orange-500/20' : 'glow-border hover:scale-105'}`}
-                onClick={handleVerifyControl}
-                disabled={isVerified || loading || !isCurrentController}
-              >
-                {loading ? "Verifying..." : isVerified ? "✓ Control Verified" : "Sign to Verify Control"}
-              </Button>
-            )}
           </div>
           
           <div className="flex flex-wrap justify-center gap-4">
@@ -130,22 +124,46 @@ export const ControlPanel = () => {
               Controller: <span className={isCurrentController ? "text-green-400" : "text-red-400"}>{isCurrentController ? "You" : "Not you"}</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              Control verified: <span className={isVerified ? "text-green-400" : "text-red-400"}>{isVerified ? "Yes" : "No"}</span>
-            </div>
-            <div className="text-sm text-muted-foreground">
               Last command: <span className="font-mono">{lastCommand || "None"}</span>
             </div>
           </div>
         </div>
       </div>
       
+      {/* Overlay when not controller */}
       {!isCurrentController && (
-        <div className="mt-4 p-3 bg-background/40 rounded-md text-center animate-pulse">
-          <p className="text-muted-foreground">
-            🔒 Only the current controller can issue commands. Increase your stake to gain control.
-          </p>
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
+          <div className="text-center p-6">
+            <p className="text-lg font-semibold text-muted-foreground">
+              You are not the controller
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Increase your stake to gain control
+            </p>
+          </div>
         </div>
       )}
+
+      {/* Verify Control Dialog */}
+      <Dialog open={showVerifyDialog} onOpenChange={setShowVerifyDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verify Control</DialogTitle>
+          </DialogHeader>
+          <div className="py-6">
+            <p className="text-center text-muted-foreground mb-4">
+              You have the highest stake! Sign to take control of the robot.
+            </p>
+            <Button 
+              onClick={handleVerifyControl}
+              className="w-full neo-button"
+              disabled={loading}
+            >
+              {loading ? "Verifying..." : "Sign to Verify Control"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
