@@ -16,27 +16,7 @@ export const HeroSection = () => {
             </p>
           </div>
           <div className="w-full max-w-sm hover-scale">
-            <ConnectButton.Custom>
-              {({ openConnectModal, account, chain, openChainModal }) => (
-                account && chain ? (
-                  <Button 
-                    onClick={openChainModal} 
-                    className="w-full neo-button transition-all duration-300 hover:scale-105"
-                    size="lg"
-                  >
-                    {account.displayName}
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={openConnectModal} 
-                    className="w-full neo-button transition-all duration-300 hover:scale-105"
-                    size="lg"
-                  >
-                    Connect Wallet
-                  </Button>
-                )
-              )}
-            </ConnectButton.Custom>
+            <ConnectButton showBalance={false} chainStatus="icon" />
           </div>
         </div>
       </div>
