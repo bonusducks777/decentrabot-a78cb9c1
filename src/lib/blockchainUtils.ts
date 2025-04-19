@@ -59,6 +59,8 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getAllRobotIds",
+        // Add chain parameter
+        chain: config.chains[0],
       }) as string[]
 
       setCachedRobotIds(robotIds)
@@ -85,6 +87,7 @@ export const useBlockchainUtils = () => {
         to: CONTRACT_ADDRESS,
         value: amountInWei,
         data: "0x", // Call the receive function
+        chain: config.chains[0], // Add the chain parameter
       })
 
       console.log("Staking transaction:", tx)
@@ -109,6 +112,8 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "withdrawTokens",
         args: [amountInWei],
+        chain: config.chains[0], // Add the chain parameter
+        account: address, // Add the account parameter
       })
 
       console.log("Withdrawal transaction:", tx)
@@ -132,6 +137,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getStakedBalance",
         args: [address],
+        chain: config.chains[0], // Add the chain parameter
       }) as bigint
 
       return formatEther(balance)
@@ -151,6 +157,7 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getHighestStaker",
+        chain: config.chains[0], // Add the chain parameter
       })
 
       return highestStaker
@@ -171,6 +178,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "isController",
         args: [address],
+        chain: config.chains[0], // Add the chain parameter
       }) as boolean
 
       return controller
@@ -190,6 +198,7 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getBotFee",
+        chain: config.chains[0], // Add the chain parameter
       }) as bigint
 
       // Convert from wei (1e18) to WND
@@ -227,6 +236,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotLocation",
         args: [robotId],
+        chain: config.chains[0], // Add the chain parameter
       }) as [bigint, bigint]
 
       return {
@@ -266,6 +276,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotBatteryLevel",
         args: [robotId],
+        chain: config.chains[0], // Add the chain parameter
       }) as bigint
 
       return Number(batteryLevel)
@@ -288,6 +299,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotUptime",
         args: [robotId],
+        chain: config.chains[0], // Add the chain parameter
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -304,7 +316,7 @@ export const useBlockchainUtils = () => {
   }
 
   const sendRobotCommand = async (robotId: string, command: string) => {
-    if (!isConnected || !walletClient) {
+    if (!isConnected || !walletClient || !address) {
       console.error("Wallet not connected")
       return false
     }
@@ -315,6 +327,8 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "sendCommand",
         args: [robotId, command],
+        chain: config.chains[0], // Add the chain parameter
+        account: address, // Add the account parameter
       })
 
       console.log(`Command sent to ${robotId}:`, command)
@@ -339,6 +353,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getTimeRemaining",
         args: [userAddress],
+        chain: config.chains[0], // Add the chain parameter
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -369,6 +384,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getStakingLeaderboard",
         args: [5], // Get top 5 stakers
+        chain: config.chains[0], // Add the chain parameter
       }) as [string[], bigint[]]
 
       const addresses = result[0]

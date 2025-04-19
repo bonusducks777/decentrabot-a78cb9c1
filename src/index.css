@@ -88,16 +88,16 @@
 
 @layer utilities {
   .glow {
-    text-shadow: 0 0 10px theme('colors.primary'), 0 0 20px theme('colors.primary');
+    text-shadow: 0 0 10px theme('colors.primary.DEFAULT'), 0 0 20px theme('colors.primary.DEFAULT');
   }
   
   .glow-box {
-    box-shadow: 0 0 10px theme('colors.primary'), 0 0 20px rgba(243, 145, 65, 0.3);
+    box-shadow: 0 0 10px theme('colors.primary.DEFAULT'), 0 0 20px rgba(243, 145, 65, 0.3);
   }
   
   .glow-border {
     @apply border border-primary;
-    box-shadow: 0 0 5px theme('colors.primary'), inset 0 0 5px theme('colors.primary');
+    box-shadow: 0 0 5px theme('colors.primary.DEFAULT'), inset 0 0 5px theme('colors.primary.DEFAULT');
   }
   
   .cyber-gradient {
@@ -115,7 +115,7 @@
   
   .neo-button {
     @apply rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all;
-    box-shadow: 0 0 10px theme('colors.primary');
+    box-shadow: 0 0 10px theme('colors.primary.DEFAULT');
   }
   
   .grid-pattern {
@@ -143,9 +143,9 @@
   }
   
   @keyframes glowPulse {
-    0% { box-shadow: 0 0 5px theme('colors.primary'); }
-    50% { box-shadow: 0 0 15px theme('colors.primary'); }
-    100% { box-shadow: 0 0 5px theme('colors.primary'); }
+    0% { box-shadow: 0 0 5px theme('colors.primary.DEFAULT'); }
+    50% { box-shadow: 0 0 15px theme('colors.primary.DEFAULT'); }
+    100% { box-shadow: 0 0 5px theme('colors.primary.DEFAULT'); }
   }
   
   @keyframes slideIn {
