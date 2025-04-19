@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useAccount, useProvider } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
@@ -8,7 +7,7 @@ import { useContractFunctions } from "@/lib/contractUtils";
 
 export const ControlPanel = () => {
   const { address, isConnected } = useAccount();
-  const provider = useProvider();
+  const publicClient = usePublicClient();
   const [isCurrentController, setIsCurrentController] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,7 +18,7 @@ export const ControlPanel = () => {
     const checkControllerStatus = async () => {
       if (isConnected && address) {
         try {
-          const controller = await contract.isController(provider, address);
+          const controller = await contract.isController(publicClient, address);
           setIsCurrentController(controller);
         } catch (error) {
           console.error("Error checking controller status:", error);
@@ -31,7 +30,7 @@ export const ControlPanel = () => {
     };
 
     checkControllerStatus();
-  }, [isConnected, address, provider]);
+  }, [isConnected, address, publicClient]);
 
   const handleVerifyControl = async () => {
     setLoading(true);

@@ -15,5 +15,5 @@ export const config = getDefaultConfig({
   },
 });
 
-export const { chains, publicClient, webSocketPublicClient } = config;
-
+// Export the config directly since publicClient and webSocketPublicClient are not available
+export { config };

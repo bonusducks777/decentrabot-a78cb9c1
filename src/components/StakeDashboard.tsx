@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useAccount, useProvider } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,7 @@ import { toast } from "@/components/ui/sonner";
 
 export const StakeDashboard = () => {
   const { address, isConnected } = useAccount();
-  const provider = useProvider();
+  const publicClient = usePublicClient();
   const [userBalance, setUserBalance] = useState("85.0");
   const [topStake, setTopStake] = useState("125.5");
   const [stakeAmount, setStakeAmount] = useState("");
@@ -32,7 +31,7 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await contract.stakeTokens(provider, stakeAmount);
+      const success = await contract.stakeTokens(publicClient, stakeAmount);
       if (success) {
         toast.success(`Successfully staked ${stakeAmount} DOT`);
         setStakeAmount("");
@@ -67,7 +66,7 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await contract.withdrawTokens(provider, withdrawAmount);
+      const success = await contract.withdrawTokens(publicClient, withdrawAmount);
       if (success) {
         toast.success(`Successfully withdrawn ${withdrawAmount} DOT`);
         setWithdrawAmount("");

@@ -1,4 +1,5 @@
-import { PublicClient } from 'wagmi';
+
+import { type PublicClient as WagmiPublicClient } from 'viem';
 
 // Placeholder for actual contract address
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -16,7 +17,8 @@ const CONTRACT_ABI = [
 
 // Placeholder functions to interact with the smart contract
 export const useContractFunctions = () => {
-  const getContract = async (publicClient: PublicClient) => {
+  // Updated to accept any type of provider for now since we're using placeholders
+  const getContract = async (publicClient: any) => {
     try {
       return publicClient;
     } catch (error) {
