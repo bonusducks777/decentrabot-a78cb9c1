@@ -48,9 +48,9 @@ const AppPage = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1 py-6 container px-4 animate-fade-in">
+      <main className="flex-1 py-4 container px-4 animate-fade-in">
         {isConnected ? (
-          <div className="grid grid-cols-12 gap-4">
+          <div className="grid grid-cols-12 gap-2">
             <div className="col-span-12 lg:col-span-8">
               <RobotCameraFeed 
                 robotId={selectedRobot}
@@ -60,20 +60,20 @@ const AppPage = () => {
               />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4 space-y-4">
+            <div className="col-span-12 lg:col-span-4 space-y-2">
               <ChatSystem />
               <StakeDashboard />
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4 mt-2">
               <RobotStatus />
             </div>
-            <div className="col-span-12 lg:col-span-8">
+            <div className="col-span-12 lg:col-span-8 mt-2">
               <RobotLocationMap />
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4 mt-2">
               <StakingLeaderboard />
             </div>
-            <div className="col-span-12">
+            <div className="col-span-12 mt-2">
               <LiveLogFeed />
             </div>
           </div>

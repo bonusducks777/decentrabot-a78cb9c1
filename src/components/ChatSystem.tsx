@@ -53,39 +53,40 @@ export const ChatSystem = () => {
   };
 
   return (
-    <Card className="neo-card flex flex-col h-full">
-      <div className="p-2">
-        <h3 className="text-xl font-bold mb-2 px-2">Community Chat</h3>
-        <ScrollArea className="h-[340px] rounded-md border mb-2">
+    <Card className="neo-card flex flex-col h-[240px]">
+      <div className="p-2 flex flex-col h-full">
+        <h3 className="text-lg font-bold mb-1 px-2">Community Chat</h3>
+        <ScrollArea className="flex-1 rounded-md border mb-2">
           <div className="p-2">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
-                className={`py-2 px-3 ${msg.id % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
+                className={`py-1 px-2 ${msg.id % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
                   rounded-md mb-1`}
               >
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-mono text-orange-400">{msg.address}</span>
+                  <span className="text-xs font-mono text-orange-400">{msg.address}</span>
                   <span className="text-xs text-muted-foreground">{formatTimestamp(msg.timestamp)}</span>
                 </div>
-                <p className="text-sm">{msg.message}</p>
+                <p className="text-xs">{msg.message}</p>
               </div>
             ))}
           </div>
         </ScrollArea>
-        <div className="flex gap-2 px-2">
+        <div className="flex gap-1 px-2">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={isConnected ? "Type your message..." : "Connect wallet to chat"}
             disabled={!isConnected}
-            className="flex-1"
+            className="flex-1 h-8 text-sm"
           />
           <Button 
             onClick={handleSendMessage} 
             disabled={!isConnected || !newMessage.trim()} 
-            className="neo-button"
+            className="neo-button h-8 text-xs"
+            size="sm"
           >
             Send
           </Button>

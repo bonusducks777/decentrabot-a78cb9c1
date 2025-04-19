@@ -55,7 +55,7 @@ export const useBlockchainUtils = () => {
   // Fetch robot IDs from the contract
   const fetchRobotIds = async () => {
     try {
-      const robotIds = await readContract({
+      const robotIds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getAllRobotIds",
@@ -82,7 +82,7 @@ export const useBlockchainUtils = () => {
       const amountInWei = parseEther(amount)
 
       // Send native tokens to the contract
-      const tx = await sendTransaction({
+      const tx = await sendTransaction(config, {
         to: CONTRACT_ADDRESS,
         value: amountInWei,
         data: "0x", // Call the receive function
@@ -106,7 +106,7 @@ export const useBlockchainUtils = () => {
     try {
       const amountInWei = parseEther(amount)
 
-      const tx = await writeContract({
+      const tx = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "withdrawTokens",
@@ -131,7 +131,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const balance = await readContract({
+      const balance = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakedBalance",
@@ -152,7 +152,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const highestStaker = await readContract({
+      const highestStaker = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getHighestStaker",
@@ -172,7 +172,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const controller = await readContract({
+      const controller = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "isController",
@@ -193,7 +193,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const fee = await readContract({
+      const fee = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getBotFee",
@@ -230,7 +230,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const location = await readContract({
+      const location = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotLocation",
@@ -270,7 +270,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const batteryLevel = await readContract({
+      const batteryLevel = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotBatteryLevel",
@@ -293,7 +293,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const uptimeSeconds = await readContract({
+      const uptimeSeconds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotUptime",
@@ -321,7 +321,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const tx = await writeContract({
+      const tx = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "sendCommand",
@@ -347,7 +347,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const timeRemainingSeconds = await readContract({
+      const timeRemainingSeconds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getTimeRemaining",
@@ -378,7 +378,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const result = await readContract({
+      const result = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakingLeaderboard",
