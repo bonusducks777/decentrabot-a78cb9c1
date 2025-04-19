@@ -13,12 +13,50 @@ const Index = () => {
       isActive: true, 
       viewerCount: 42,
       thumbnailUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
+      batteryLevel: 85,
+      uptime: "4h 12m",
+      operatorCount: 5
     },
-    { id: "robot-2", title: "Garden Maintenance Bot", viewerCount: 0 },
-    { id: "robot-3", title: "Security Patrol Bot", viewerCount: 0 },
-    { id: "robot-4", title: "Delivery Bot", viewerCount: 0 },
-    { id: "robot-5", title: "Assembly Line Bot", viewerCount: 0 },
-    { id: "robot-6", title: "Cleaning Bot", viewerCount: 0 },
+    { 
+      id: "robot-2", 
+      title: "Garden Maintenance Bot", 
+      viewerCount: 0,
+      batteryLevel: 65,
+      uptime: "0h 0m",
+      operatorCount: 0
+    },
+    { 
+      id: "robot-3", 
+      title: "Security Patrol Bot", 
+      viewerCount: 0,
+      batteryLevel: 92,
+      uptime: "0h 0m",
+      operatorCount: 0
+    },
+    { 
+      id: "robot-4", 
+      title: "Delivery Bot", 
+      viewerCount: 0,
+      batteryLevel: 78,
+      uptime: "0h 0m",
+      operatorCount: 0
+    },
+    { 
+      id: "robot-5", 
+      title: "Assembly Line Bot", 
+      viewerCount: 0,
+      batteryLevel: 45,
+      uptime: "0h 0m",
+      operatorCount: 0
+    },
+    { 
+      id: "robot-6", 
+      title: "Cleaning Bot", 
+      viewerCount: 0,
+      batteryLevel: 63,
+      uptime: "0h 0m",
+      operatorCount: 0
+    },
   ];
 
   return (
@@ -42,4 +80,3 @@ const Index = () => {
 };
 
 export default Index;
-

@@ -1,20 +1,98 @@
 
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useAccount } from "wagmi";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Activity, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const RobotCameraFeed = () => {
+interface RobotCameraFeedProps {
+  robotName?: string;
+  viewerCount?: number;
+}
+
+export const RobotCameraFeed = ({ 
+  robotName = "Warehouse Bot Alpha", 
+  viewerCount = 42 
+}: RobotCameraFeedProps) => {
+  const { isConnected } = useAccount();
+  
+  const robots = [
+    { id: "robot-1", name: "Warehouse Bot Alpha" },
+    { id: "robot-2", name: "Garden Maintenance Bot" },
+    { id: "robot-3", name: "Security Patrol Bot" },
+    { id: "robot-4", name: "Delivery Bot" },
+    { id: "robot-5", name: "Assembly Line Bot" },
+    { id: "robot-6", name: "Cleaning Bot" },
+  ];
+
   return (
     <Card className="neo-card p-4 mb-6 overflow-hidden">
-      <div className="relative aspect-video bg-black/70 rounded-md grid place-items-center overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20"></div>
-        <div className="text-center space-y-2">
-          <div className="font-mono text-cyber-cyan">CAMERA FEED</div>
-          <div className="text-2xl font-bold">Robot Camera Offline</div>
-          <div className="text-muted-foreground">Connect wallet and stake to access live feed</div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-semibold">Live Feed</h3>
+          {isConnected && (
+            <Select defaultValue="robot-1">
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select robot" />
+              </SelectTrigger>
+              <SelectContent>
+                {robots.map(robot => (
+                  <SelectItem key={robot.id} value={robot.id}>
+                    {robot.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <span className="text-xs text-red-400">DISCONNECTED</span>
-        </div>
+        
+        {isConnected && (
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="h-4 w-4 text-cyber-cyan" />
+              <span>{viewerCount} watching</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <span className="text-xs text-green-400">LIVE</span>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="relative aspect-video bg-black/70 rounded-md overflow-hidden">
+        {isConnected ? (
+          <>
+            <div className="absolute inset-0 grid-pattern opacity-20"></div>
+            <img 
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e" 
+              alt="Robot camera feed"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-4 left-4 flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+              <span className="text-xs text-green-400">CONNECTED</span>
+            </div>
+            <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-md text-sm">
+              <span className="text-white">{robotName}</span>
+            </div>
+            <div className="absolute top-4 right-4 bg-red-500/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium">
+              LIVE
+            </div>
+          </>
+        ) : (
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="text-center space-y-4 max-w-md px-6">
+              <div className="font-mono text-cyber-cyan">CAMERA FEED</div>
+              <div className="text-2xl font-bold">Connect Wallet to Access Live Feed</div>
+              <div className="text-muted-foreground mb-4">
+                You need to connect your wallet to view the robot camera feed and control the robot
+              </div>
+              <ConnectButton />
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );

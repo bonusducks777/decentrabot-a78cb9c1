@@ -1,17 +1,20 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Battery, Activity, Clock } from "lucide-react";
 
 interface RobotStatusProps {
   batteryLevel?: number;
   connectionStatus?: 'online' | 'offline';
   lastActive?: string;
+  chargeRate?: number;
 }
 
 export const RobotStatus = ({ 
   batteryLevel = 85, 
   connectionStatus = 'offline',
-  lastActive = '2 minutes ago'
+  lastActive = '2 minutes ago',
+  chargeRate = 2.5 // DOT per hour
 }: RobotStatusProps) => {
   return (
     <Card className="neo-card p-4">
@@ -27,7 +30,10 @@ export const RobotStatus = ({
       
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Battery Level</span>
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Battery className="text-muted-foreground h-4 w-4" />
+            Battery Level
+          </span>
           <div className="flex items-center gap-2">
             <div className="h-2 w-24 bg-gray-200 rounded-full">
               <div 
@@ -40,7 +46,18 @@ export const RobotStatus = ({
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Last Active</span>
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Activity className="text-muted-foreground h-4 w-4" />
+            Charge Rate
+          </span>
+          <span className="text-sm text-cyber-cyan">{chargeRate} DOT/hr</span>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Clock className="text-muted-foreground h-4 w-4" />
+            Last Active
+          </span>
           <span className="text-sm">{lastActive}</span>
         </div>
       </div>

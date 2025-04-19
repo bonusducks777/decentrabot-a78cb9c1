@@ -8,7 +8,7 @@ import { LiveLogFeed } from "@/components/LiveLogFeed";
 import { RobotCameraFeed } from "@/components/RobotCameraFeed";
 import { RobotStatus } from "@/components/RobotStatus";
 import { ChatSystem } from "@/components/ChatSystem";
-import { Badge } from "@/components/ui/badge";
+import { StakingLeaderboard } from "@/components/StakingLeaderboard";
 
 const AppPage = () => {
   const { isConnected } = useAccount();
@@ -16,21 +16,28 @@ const AppPage = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1 py-12 container">
-        <div className="flex items-center gap-3 mb-8">
-          <h1 className="text-4xl font-bold glow">Bot Control Center</h1>
-          <Badge variant="outline" className="border-cyber-cyan text-cyber-cyan">
-            {isConnected ? "Wallet Connected" : "Not Connected"}
-          </Badge>
+      <main className="flex-1 py-8 container">
+        <div className="flex items-center gap-3 mb-6">
+          <h1 className="text-3xl font-bold glow">Bot Control Center</h1>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Main content area - Camera feed and controls */}
+          <div className="lg:col-span-8 space-y-6">
             <RobotCameraFeed />
-            <ControlPanel />
+            {isConnected && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ControlPanel />
+                <div className="space-y-6">
+                  <RobotStatus />
+                  <StakingLeaderboard />
+                </div>
+              </div>
+            )}
           </div>
-          <div className="space-y-6">
-            <RobotStatus />
+          
+          {/* Right sidebar - Stats and chat */}
+          <div className="lg:col-span-4 space-y-6">
             <StakeDashboard />
             <LiveLogFeed />
             <ChatSystem />
