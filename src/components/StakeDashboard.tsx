@@ -104,30 +104,30 @@ export const StakeDashboard = () => {
 
   return (
     <Card className="neo-card">
-      <div className="p-4">
-        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-orange-400">(Westend)</span></h3>
+      <div className="p-2">
+        <h3 className="text-base font-bold mb-2">Stake Dashboard <span className="text-xs text-orange-400">(Westend)</span></h3>
         
-        <div className="space-y-3">
-          <div className="flex justify-between items-center border-b border-border pb-2">
-            <span className="text-muted-foreground">Your Stake:</span>
-            <span className="text-xl font-bold text-orange-400">{userBalance} WND</span>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center border-b border-border pb-1">
+            <span className="text-sm text-muted-foreground">Your Stake:</span>
+            <span className="text-base font-bold text-orange-400">{userBalance} WND</span>
           </div>
           
-          <div className="flex justify-between items-center border-b border-border pb-2">
-            <span className="text-muted-foreground">Top Stake:</span>
-            <span className="text-xl font-bold text-orange-400">{topStake} WND</span>
+          <div className="flex justify-between items-center border-b border-border pb-1">
+            <span className="text-sm text-muted-foreground">Top Stake:</span>
+            <span className="text-base font-bold text-orange-400">{topStake} WND</span>
           </div>
           
-          <div className="flex justify-between items-center pb-2">
-            <span className="text-muted-foreground">Controller:</span>
-            <span className="text-sm font-mono text-orange-400">{topStaker}</span>
+          <div className="flex justify-between items-center pb-1">
+            <span className="text-sm text-muted-foreground">Controller:</span>
+            <span className="text-xs font-mono text-orange-400">{topStaker}</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-2 mt-2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="neo-button" disabled={!isConnected}>Stake More</Button>
+              <Button className="neo-button h-8 text-xs" disabled={!isConnected}>Stake More</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -156,7 +156,7 @@ export const StakeDashboard = () => {
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-orange-400" disabled={!isConnected}>Withdraw</Button>
+              <Button variant="outline" className="border-orange-400 h-8 text-xs" disabled={!isConnected}>Withdraw</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

@@ -64,8 +64,8 @@ const AppPage = () => {
             
             {/* Right Column */}
             <div className="col-span-12 lg:col-span-4 space-y-2">
-              {/* Make ChatSystem taller */}
-              <div className="h-[400px]">
+              {/* Reduced height of ChatSystem */}
+              <div className="h-[300px]">
                 <ChatSystem />
               </div>
               <StakeDashboard />
