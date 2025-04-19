@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const Navbar = () => {
   return (
@@ -38,9 +39,7 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button className="neo-button">
-            Connect Wallet
-          </Button>
+          <ConnectButton showBalance={false} />
         </div>
       </div>
     </nav>

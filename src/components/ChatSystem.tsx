@@ -1,0 +1,96 @@
+
+import { useState, useEffect } from "react";
+import { useAccount } from 'wagmi';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "@/components/ui/sonner";
+
+interface ChatMessage {
+  id: number;
+  address: string;
+  message: string;
+  timestamp: number;
+}
+
+export const ChatSystem = () => {
+  const { address, isConnected } = useAccount();
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: 1, address: '0xd8da...6273', message: 'Just increased my stake!', timestamp: Date.now() - 300000 },
+    { id: 2, address: '0xab12...9f3d', message: 'The bot is moving quite well today', timestamp: Date.now() - 120000 },
+    { id: 3, address: '0x742a...e851', message: 'Anyone else having connection issues?', timestamp: Date.now() - 60000 },
+  ]);
+  const [newMessage, setNewMessage] = useState('');
+
+  const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleSendMessage = () => {
+    if (!newMessage.trim()) return;
+    if (!isConnected) {
+      toast("Please connect your wallet to chat");
+      return;
+    }
+
+    const message: ChatMessage = {
+      id: messages.length + 1,
+      address: address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : '',
+      message: newMessage,
+      timestamp: Date.now()
+    };
+
+    setMessages([...messages, message]);
+    setNewMessage('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  return (
+    <Card className="neo-card">
+      <div className="p-6">
+        <h3 className="text-xl font-bold mb-4">Community Chat</h3>
+        <ScrollArea className="h-[300px] rounded-md border mb-4">
+          <div className="p-4">
+            {messages.map((msg) => (
+              <div 
+                key={msg.id} 
+                className={`py-2 px-3 ${msg.id % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
+                  rounded-md mb-1`}
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-mono text-cyber-cyan">{msg.address}</span>
+                  <span className="text-xs text-muted-foreground">{formatTimestamp(msg.timestamp)}</span>
+                </div>
+                <p className="text-sm">{msg.message}</p>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+        <div className="flex gap-2">
+          <Input
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={isConnected ? "Type your message..." : "Connect wallet to chat"}
+            disabled={!isConnected}
+            className="flex-1"
+          />
+          <Button 
+            onClick={handleSendMessage} 
+            disabled={!isConnected || !newMessage.trim()} 
+            className="neo-button"
+          >
+            Send
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+};
