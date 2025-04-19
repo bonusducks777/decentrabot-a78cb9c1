@@ -1,3 +1,4 @@
+
 import { type PublicClient } from 'viem';
 
 // Contract configuration
