@@ -25,10 +25,10 @@ const westend = {
   },
   rpcUrls: {
     default: {
-      http: ['wss://westend-rpc.dwellir.com'],
+      http: ['https://westend-rpc.dwellir.com'],
     },
     public: {
-      http: ['wss://westend-rpc.dwellir.com'],
+      http: ['https://westend-rpc.dwellir.com'],
     },
   },
   blockExplorers: {
