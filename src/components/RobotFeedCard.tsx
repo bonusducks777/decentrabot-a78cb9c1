@@ -1,88 +1,100 @@
 
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Activity, Battery, Users } from "lucide-react";
+import { Battery, Clock, Users } from "lucide-react";
 
 interface RobotFeedCardProps {
   id: string;
   title: string;
   isActive?: boolean;
-  viewerCount?: number;
+  viewerCount: number;
   thumbnailUrl?: string;
-  batteryLevel?: number;
-  uptime?: string;
-  operatorCount?: number;
+  batteryLevel: number;
+  uptime: string;
+  operatorCount: number;
 }
 
-export const RobotFeedCard = ({ 
-  id, 
-  title, 
-  isActive = false, 
-  viewerCount = 0, 
+export const RobotFeedCard = ({
+  id,
+  title,
+  isActive = false,
+  viewerCount,
   thumbnailUrl,
-  batteryLevel = 75,
-  uptime = "3h 45m",
-  operatorCount = 3
+  batteryLevel,
+  uptime,
+  operatorCount
 }: RobotFeedCardProps) => {
   return (
-    <Card className={`overflow-hidden transition-transform hover:scale-[1.02] ${!isActive && 'opacity-60'}`}>
-      <Link to={isActive ? "/app" : "#"} className={`block ${!isActive && 'cursor-not-allowed'}`}>
-        <div className="aspect-video bg-black/70 relative">
-          {thumbnailUrl ? (
-            <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover" />
-          ) : (
-            <div className="absolute inset-0 grid place-items-center">
-              <div className="text-muted-foreground">No Feed Available</div>
-            </div>
-          )}
-          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 rounded text-xs font-medium backdrop-blur-sm flex items-center gap-1">
-            <Users className="h-3 w-3" />
-            {viewerCount} watching
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group neo-card">
+      <div className="relative aspect-video bg-black/70">
+        {thumbnailUrl ? (
+          <img 
+            src={thumbnailUrl} 
+            alt={title} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="grid-pattern opacity-20 absolute inset-0"></div>
+            <span className="text-muted-foreground">No Preview Available</span>
           </div>
-          {isActive && (
-            <div className="absolute top-2 right-2 px-2 py-1 bg-red-500/80 rounded text-xs font-medium backdrop-blur-sm">
-              LIVE
+        )}
+        
+        {isActive && (
+          <Badge className="absolute top-2 right-2 bg-red-500" variant="default">
+            LIVE
+          </Badge>
+        )}
+        
+        {viewerCount > 0 && (
+          <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs flex items-center gap-1">
+            <Users className="h-3 w-3" />
+            {viewerCount}
+          </div>
+        )}
+      </div>
+      
+      <div className="p-4">
+        <h3 className="font-bold mb-2">{title}</h3>
+        
+        <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Battery className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-1">
+              <div className="h-1.5 w-12 bg-gray-200 rounded-full">
+                <div 
+                  className="h-full bg-green-500 rounded-full"
+                  style={{ width: `${batteryLevel}%` }}
+                />
+              </div>
+              <span>{batteryLevel}%</span>
             </div>
-          )}
-          {!isActive && (
-            <div className="absolute inset-0 grid place-items-center bg-black/50 backdrop-blur-sm">
-              <div className="text-white font-medium">Coming Soon</div>
-            </div>
-          )}
-        </div>
-        <div className="p-3">
-          <h3 className="font-medium text-sm text-cyber-cyan">{title}</h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            {isActive ? 'Live Now' : 'Offline'}
-          </p>
+          </div>
           
-          {/* Metrics section */}
-          {isActive && (
-            <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-border/50">
-              <div className="flex flex-col items-center text-xs">
-                <div className="flex items-center gap-1 text-muted-foreground mb-1">
-                  <Battery className="h-3 w-3" />
-                </div>
-                <span className="font-medium">{batteryLevel}%</span>
-              </div>
-              
-              <div className="flex flex-col items-center text-xs">
-                <div className="flex items-center gap-1 text-muted-foreground mb-1">
-                  <Activity className="h-3 w-3" />
-                </div>
-                <span className="font-medium">{uptime}</span>
-              </div>
-              
-              <div className="flex flex-col items-center text-xs">
-                <div className="flex items-center gap-1 text-muted-foreground mb-1">
-                  <Users className="h-3 w-3" />
-                </div>
-                <span className="font-medium">{operatorCount}</span>
-              </div>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock className="h-3.5 w-3.5" />
+            <span>{uptime}</span>
+          </div>
+          
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Users className="h-3.5 w-3.5" />
+            <span>{operatorCount} operators</span>
+          </div>
+          
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+            <span>{isActive ? 'Online' : 'Offline'}</span>
+          </div>
         </div>
-      </Link>
+        
+        <Link to={`/app?robot=${id}`}>
+          <Button className="w-full neo-button">
+            {isActive ? 'Control Robot' : 'View Details'}
+          </Button>
+        </Link>
+      </div>
     </Card>
   );
 };
