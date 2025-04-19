@@ -13,7 +13,6 @@ import { ChatSystem } from "@/components/ChatSystem";
 import { StakingLeaderboard } from "@/components/StakingLeaderboard";
 import { RobotLocationMap } from "@/components/RobotLocationMap";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AppPage = () => {
   const { isConnected } = useAccount();
@@ -37,16 +36,12 @@ const AppPage = () => {
 
   const selectedRobotData = robots.find(r => r.id === selectedRobot) || robots[0];
 
-  const handleRobotChange = (value: string) => {
-    setSelectedRobot(value);
-  };
-
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1 py-6 container px-4 animate-fade-in">
+      <main className="flex-1 py-4 container px-4 animate-fade-in">
         {isConnected ? (
-          <div className="grid grid-cols-12 gap-4">
+          <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 lg:col-span-8">
               <RobotCameraFeed 
                 robotId={selectedRobot}
@@ -56,14 +51,14 @@ const AppPage = () => {
               />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+            <div className="col-span-12 lg:col-span-4 space-y-4">
               <ChatSystem />
               <StakeDashboard />
             </div>
             <div className="col-span-12 lg:col-span-4">
               <RobotStatus />
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-8">
               <RobotLocationMap />
             </div>
             <div className="col-span-12 lg:col-span-4">

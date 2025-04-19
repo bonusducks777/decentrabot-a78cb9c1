@@ -27,33 +27,28 @@ export const LiveLogFeed = () => {
       onOpenChange={setIsExpanded}
       className="w-full transition-all duration-300 ease-in-out"
     >
-      <Card className={`neo-card overflow-hidden transition-all duration-300 ${isExpanded ? "mb-6" : "h-14"}`}>
-        <div className="p-4">
+      <Card className={`neo-card overflow-hidden transition-all duration-300 ${isExpanded ? "mb-4" : "h-10"}`}>
+        <div className="p-2">
           <CollapsibleTrigger asChild>
             <div className="flex justify-between items-center cursor-pointer">
               <div className="flex items-center space-x-2">
-                <h3 className="text-lg font-bold">Live Activity Log</h3>
-                {!isExpanded && (
-                  <span className="text-xs text-orange-400 animate-pulse">
-                    {logs[0].action}
-                  </span>
-                )}
+                <h3 className="text-sm font-medium">Live Activity Log</h3>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-orange-400 hover:text-orange-500 hover:bg-orange-500/10"
+                className="text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 h-6 w-6 p-0"
               >
                 {isExpanded ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="h-3 w-3" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-3 w-3" />
                 )}
               </Button>
             </div>
           </CollapsibleTrigger>
           
-          <CollapsibleContent className="mt-3 animate-accordion-down">
+          <CollapsibleContent className="mt-2 animate-accordion-down">
             <ScrollArea className="h-[200px] rounded-md border">
               <div className="p-2">
                 {logs.map((log, index) => (

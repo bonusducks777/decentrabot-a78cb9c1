@@ -1,11 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useContractFunctions } from "@/lib/contractUtils";
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
 import { toast } from "@/components/ui/sonner";
 
 export const StakeDashboard = () => {
@@ -13,11 +13,33 @@ export const StakeDashboard = () => {
   const publicClient = usePublicClient();
   const [userBalance, setUserBalance] = useState("85.0");
   const [topStake, setTopStake] = useState("125.5");
+  const [topStaker, setTopStaker] = useState("0xd8da...6273");
   const [stakeAmount, setStakeAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const contract = useContractFunctions();
+  const { stakeTokens, withdrawTokens, getUserBalance, getHighestStaker } = useBlockchainUtils();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isConnected && address && publicClient) {
+        try {
+          const balance = await getUserBalance(publicClient, address);
+          setUserBalance(balance);
+          
+          const highestStaker = await getHighestStaker(publicClient);
+          setTopStaker(highestStaker);
+          
+          // For demo purposes, we'll set a fixed top stake
+          setTopStake("125.5");
+        } catch (error) {
+          console.error("Error fetching stake data:", error);
+        }
+      }
+    };
+    
+    fetchData();
+  }, [isConnected, address, publicClient, getUserBalance, getHighestStaker]);
 
   const handleStake = async () => {
     if (!isConnected || !address) {
@@ -32,7 +54,7 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await contract.stakeTokens(publicClient, stakeAmount);
+      const success = await stakeTokens(publicClient, stakeAmount);
       if (success) {
         toast.success(`Successfully staked ${stakeAmount} DOT`);
         setStakeAmount("");
@@ -67,7 +89,7 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await contract.withdrawTokens(publicClient, withdrawAmount);
+      const success = await withdrawTokens(publicClient, withdrawAmount);
       if (success) {
         toast.success(`Successfully withdrawn ${withdrawAmount} DOT`);
         setWithdrawAmount("");
@@ -86,27 +108,27 @@ export const StakeDashboard = () => {
 
   return (
     <Card className="neo-card">
-      <div className="p-6">
+      <div className="p-4">
         <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-orange-400">(Moonbeam)</span></h3>
         
-        <div className="space-y-4">
-          <div className="flex justify-between items-center border-b border-border pb-3">
+        <div className="space-y-3">
+          <div className="flex justify-between items-center border-b border-border pb-2">
             <span className="text-muted-foreground">Your Stake:</span>
             <span className="text-xl font-bold text-orange-400">{userBalance} DOT</span>
           </div>
           
-          <div className="flex justify-between items-center border-b border-border pb-3">
+          <div className="flex justify-between items-center border-b border-border pb-2">
             <span className="text-muted-foreground">Top Stake:</span>
             <span className="text-xl font-bold text-orange-400">{topStake} DOT</span>
           </div>
           
-          <div className="flex justify-between items-center pb-3">
+          <div className="flex justify-between items-center pb-2">
             <span className="text-muted-foreground">Controller:</span>
-            <span className="text-sm font-mono text-orange-400">0xd8da...6273</span>
+            <span className="text-sm font-mono text-orange-400">{topStaker}</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-2 gap-4 mt-4">
           <Dialog>
             <DialogTrigger asChild>
               <Button className="neo-button" disabled={!isConnected}>Stake More</Button>

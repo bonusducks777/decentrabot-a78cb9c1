@@ -2,12 +2,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Map, Pin } from "lucide-react";
-import useBlockchainFunctions from "@/lib/blockchainUtils";
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 export const RobotLocationMap = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [location, setLocation] = useState({ lat: 40.7128, lng: -74.0060 });
-  const { getRobotLocation } = useBlockchainFunctions();
+  const { getRobotLocation } = useBlockchainUtils();
   
   // Fetch robot location
   useEffect(() => {
@@ -34,7 +34,7 @@ export const RobotLocationMap = () => {
     // For this demo, we'll just show a static representation
     const mapContainer = mapRef.current;
     const robotMarker = document.createElement('div');
-    robotMarker.className = 'absolute w-4 h-4 bg-orange-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow-md pulse';
+    robotMarker.className = 'absolute w-4 h-4 bg-orange-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow-md pulse-marker';
     
     // Calculate position based on coordinates (simplified)
     const x = (location.lng + 180) / 360 * 100;
@@ -50,8 +50,8 @@ export const RobotLocationMap = () => {
   }, [location]);
   
   return (
-    <Card className="neo-card p-4">
-      <div className="flex justify-between items-center mb-4">
+    <Card className="neo-card p-3 mb-4">
+      <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-2">
           <Map className="h-5 w-5 text-orange-400" />
           <h3 className="text-lg font-semibold">Robot Location</h3>
@@ -75,22 +75,13 @@ export const RobotLocationMap = () => {
       </div>
       <style>
         {`
-        @keyframes pulse {
-          0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-          70% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        @keyframes pulse-marker {
+          0% { box-shadow: 0 0 0 0 rgba(243, 145, 65, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(243, 145, 65, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(243, 145, 65, 0); }
         }
-        .pulse::after {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 100%;
-          height: 100%;
-          background: rgba(243, 145, 65, 0.6);
-          border-radius: 50%;
-          transform: translate(-50%, -50%);
-          animation: pulse 2s infinite;
+        .pulse-marker {
+          animation: pulse-marker 2s infinite;
         }
         `}
       </style>

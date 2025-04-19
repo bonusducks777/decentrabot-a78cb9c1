@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Activity, Users, Clock } from "lucide-react";
+import { Users, Clock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RobotCameraFeedProps {
@@ -31,7 +31,7 @@ export const RobotCameraFeed = ({
   ];
 
   return (
-    <Card className="neo-card p-4 mb-6 overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <Card className="neo-card p-3 mb-4 overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
           <Select value={robotId} onValueChange={(value) => console.log(value)}>
@@ -49,17 +49,17 @@ export const RobotCameraFeed = ({
         </div>
         
         {isConnected && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-sm">
               <Users className="h-4 w-4 text-orange-400" />
               <span>{viewerCount} watching</span>
             </div>
-            <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full animate-pulse">
+            <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full">
               <Clock className="h-4 w-4 text-orange-400" />
               <span className="font-semibold text-orange-400">{chargeRate} DOT/hr</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-green-500 soft-pulse"></div>
               <span className="text-xs text-green-400">LIVE</span>
             </div>
           </div>
@@ -76,13 +76,13 @@ export const RobotCameraFeed = ({
               className="w-full h-full object-cover"
             />
             <div className="absolute top-4 left-4 flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500 soft-pulse"></div>
               <span className="text-xs text-green-400">CONNECTED</span>
             </div>
             <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-md text-sm">
               <span className="text-white">{robotName}</span>
             </div>
-            <div className="absolute top-4 right-4 bg-red-500/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium animate-pulse">
+            <div className="absolute top-4 right-4 bg-red-500/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium soft-pulse">
               LIVE
             </div>
           </>

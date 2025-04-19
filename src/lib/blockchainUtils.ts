@@ -4,47 +4,57 @@ import { type PublicClient } from 'viem';
 // Contract configuration
 export const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-// Blockchain interaction functions
-export const useBlockchainFunctions = () => {
-  // Staking interactions
+// Blockchain functions for the entire application
+export const useBlockchainUtils = () => {
+  // ========== STAKING OPERATIONS ==========
+  
   const stakeTokens = async (provider: any, amount: string) => {
     console.log('Staking tokens:', amount);
-    // In a real implementation, this would call the contract
+    // In a real implementation, this would call the contract method
+    // e.g., contract.write.stakeTokens([amount])
     return true;
   };
 
   const withdrawTokens = async (provider: any, amount: string) => {
     console.log('Withdrawing tokens:', amount);
-    // In a real implementation, this would call the contract
+    // In a real implementation, this would call the contract method
+    // e.g., contract.write.withdrawTokens([amount])
     return true;
   };
 
-  // Balance and controller checks
+  // ========== BALANCE AND CONTROL CHECKS ==========
+  
   const getUserBalance = async (provider: any, address: string) => {
     console.log('Getting balance for:', address);
     // In a real implementation, this would query the contract
+    // e.g., const result = await contract.read.getUserBalance([address])
     return '85.0';
   };
 
   const getHighestStaker = async (provider: any) => {
     console.log('Getting highest staker');
     // In a real implementation, this would query the contract
+    // e.g., const result = await contract.read.getHighestStaker()
     return '0xd8da...6273';
   };
 
   const isController = async (provider: any, address: string) => {
     console.log('Checking if controller:', address);
     // In a real implementation, this would compare with highest staker
+    // e.g., const highestStaker = await contract.read.getHighestStaker()
+    // return highestStaker.toLowerCase() === address.toLowerCase()
     return true;
   };
 
   const getBotFee = async (provider: any) => {
     console.log('Getting bot fee');
     // In a real implementation, this would query the contract
+    // e.g., const result = await contract.read.getBotFee()
     return '2.5';
   };
 
-  // Robot status and interactions
+  // ========== ROBOT STATUS AND INTERACTIONS ==========
+  
   const getRobotLocation = async (robotId: string) => {
     console.log('Getting location for robot:', robotId);
     // In a real implementation, this would query an API or contract
@@ -78,19 +88,30 @@ export const useBlockchainFunctions = () => {
   const sendRobotCommand = async (robotId: string, command: string) => {
     console.log(`Sending command to ${robotId}:`, command);
     // In a real implementation, this would call the contract
+    // e.g., await contract.write.sendCommand([robotId, command])
     return true;
   };
 
-  // Contract utilities
+  // ========== CONTRACT UTILITIES ==========
+  
   const getTimeRemaining = async (address: string) => {
     console.log('Getting time remaining for:', address);
     // In a real implementation, this would calculate based on stake and rate
+    // e.g., const stake = await contract.read.getUserBalance([address])
+    // const rate = await contract.read.getBotFee()
+    // return calculateTimeFromStakeAndRate(stake, rate)
     return '1h 32m';
   };
 
   const getLeaderboard = async () => {
     console.log('Getting leaderboard');
-    // In a real implementation, this would query the contract
+    // In a real implementation, this would query the contract for top stakers
+    // e.g., const stakers = await contract.read.getTopStakers([5])
+    // return Promise.all(stakers.map(async (staker) => {
+    //   const stake = await contract.read.getUserBalance([staker])
+    //   const time = await getTimeRemaining(staker)
+    //   return { address: staker, stake, timeRemaining: time }
+    // }))
     return [
       { address: '0xd8da...6273', stake: '125.5', timeRemaining: '1h 32m' },
       { address: '0xab12...9f3d', stake: '85.0', timeRemaining: '4h 15m' },
@@ -100,6 +121,8 @@ export const useBlockchainFunctions = () => {
     ];
   };
 
+  // ========== RETURN ALL FUNCTIONS ==========
+  
   return {
     // Staking
     stakeTokens,
@@ -123,4 +146,4 @@ export const useBlockchainFunctions = () => {
   };
 };
 
-export default useBlockchainFunctions;
+export default useBlockchainUtils;

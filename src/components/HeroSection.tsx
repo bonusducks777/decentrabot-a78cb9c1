@@ -17,21 +17,31 @@ export const HeroSection = () => {
           </div>
           <div className="w-full max-w-sm hover-scale">
             <ConnectButton.Custom>
-              {({ openConnectModal }) => (
-                <Button 
-                  onClick={openConnectModal} 
-                  className="w-full neo-button transition-all duration-300 hover:scale-105"
-                  size="lg"
-                >
-                  Connect Wallet
-                </Button>
+              {({ openConnectModal, account, chain, openChainModal }) => (
+                account && chain ? (
+                  <Button 
+                    onClick={openChainModal} 
+                    className="w-full neo-button transition-all duration-300 hover:scale-105"
+                    size="lg"
+                  >
+                    {account.displayName}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={openConnectModal} 
+                    className="w-full neo-button transition-all duration-300 hover:scale-105"
+                    size="lg"
+                  >
+                    Connect Wallet
+                  </Button>
+                )
               )}
             </ConnectButton.Custom>
           </div>
         </div>
       </div>
       
-      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60 animate-pulse"></div>
+      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60 soft-pulse"></div>
     </div>
   );
 };

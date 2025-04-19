@@ -4,7 +4,7 @@ import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
-import { useContractFunctions } from "@/lib/contractUtils";
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 export const ControlPanel = () => {
   const { address, isConnected } = useAccount();
@@ -14,13 +14,13 @@ export const ControlPanel = () => {
   const [loading, setLoading] = useState(false);
   const [lastCommand, setLastCommand] = useState("");
 
-  const contract = useContractFunctions();
+  const { isController } = useBlockchainUtils();
 
   useEffect(() => {
     const checkControllerStatus = async () => {
       if (isConnected && address) {
         try {
-          const controller = await contract.isController(publicClient, address);
+          const controller = await isController(publicClient, address);
           setIsCurrentController(controller);
         } catch (error) {
           console.error("Error checking controller status:", error);
@@ -32,7 +32,7 @@ export const ControlPanel = () => {
     };
 
     checkControllerStatus();
-  }, [isConnected, address, publicClient]);
+  }, [isConnected, address, publicClient, isController]);
 
   const handleVerifyControl = async () => {
     setLoading(true);
@@ -62,72 +62,50 @@ export const ControlPanel = () => {
     setLastCommand(command);
   };
 
-  if (!isConnected) {
-    return (
-      <Card className="neo-card p-4 text-center animate-fade-in">
-        <div className="flex flex-col items-center space-y-4">
-          <p className="text-xl text-muted-foreground">
-            🔒 Connect your Moonbeam wallet to interact with the robot
-          </p>
-        </div>
-      </Card>
-    );
-  }
-
-  if (!isCurrentController) {
-    return (
-      <Card className="neo-card p-4 text-center animate-fade-in">
-        <div className="flex flex-col items-center space-y-4">
-          <p className="text-xl text-muted-foreground">
-            🔒 Only the current controller can issue commands. Increase your stake to gain control.
-          </p>
-        </div>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="neo-card p-4 mt-4 transition-all duration-300 hover:shadow-lg animate-fade-in">
+    <Card className={`neo-card p-3 mt-4 mb-4 transition-all duration-300 hover:shadow-lg animate-fade-in ${!isCurrentController ? 'opacity-70' : ''}`}>
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="lg:w-2/3">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
-            <Button 
-              variant={isVerified ? "outline" : "default"}
-              className={`transition-all duration-300 ${isVerified ? 'bg-orange-500/20' : 'glow-border hover:scale-105'}`}
-              onClick={handleVerifyControl}
-              disabled={isVerified || loading}
-            >
-              {loading ? "Verifying..." : isVerified ? "✓ Control Verified" : "Sign to Verify Control"}
-            </Button>
+            {isCurrentController && (
+              <Button 
+                variant={isVerified ? "outline" : "default"}
+                className={`transition-all duration-300 ${isVerified ? 'bg-orange-500/20' : 'glow-border hover:scale-105'}`}
+                onClick={handleVerifyControl}
+                disabled={isVerified || loading || !isCurrentController}
+              >
+                {loading ? "Verifying..." : isVerified ? "✓ Control Verified" : "Sign to Verify Control"}
+              </Button>
+            )}
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex flex-wrap justify-center gap-4">
             <Button 
-              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
+              className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("up")}
-              disabled={!isVerified}
+              disabled={!isVerified || !isCurrentController}
             >
               ↑
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
+              className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("left")}
-              disabled={!isVerified}
+              disabled={!isVerified || !isCurrentController}
             >
               ←
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
+              className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("down")}
-              disabled={!isVerified}
+              disabled={!isVerified || !isCurrentController}
             >
               ↓
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
+              className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("right")}
-              disabled={!isVerified}
+              disabled={!isVerified || !isCurrentController}
             >
               →
             </Button>
@@ -138,6 +116,9 @@ export const ControlPanel = () => {
           <div className="space-y-4">
             <div className="text-lg font-semibold">Current Status</div>
             <div className="text-sm text-muted-foreground">
+              Controller: <span className={isCurrentController ? "text-green-400" : "text-red-400"}>{isCurrentController ? "You" : "Not you"}</span>
+            </div>
+            <div className="text-sm text-muted-foreground">
               Control verified: <span className={isVerified ? "text-green-400" : "text-red-400"}>{isVerified ? "Yes" : "No"}</span>
             </div>
             <div className="text-sm text-muted-foreground">
@@ -146,6 +127,14 @@ export const ControlPanel = () => {
           </div>
         </div>
       </div>
+      
+      {!isCurrentController && (
+        <div className="mt-4 p-3 bg-background/40 rounded-md text-center animate-pulse">
+          <p className="text-muted-foreground">
+            🔒 Only the current controller can issue commands. Increase your stake to gain control.
+          </p>
+        </div>
+      )}
     </Card>
   );
 };

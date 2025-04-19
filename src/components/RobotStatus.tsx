@@ -17,8 +17,8 @@ export const RobotStatus = ({
   chargeRate = 2.5 // DOT per hour
 }: RobotStatusProps) => {
   return (
-    <Card className="neo-card p-4">
-      <div className="flex justify-between items-center mb-4">
+    <Card className="neo-card p-3 mb-4">
+      <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold">Robot Status</h3>
         <Badge 
           variant={connectionStatus === 'online' ? "default" : "secondary"}
@@ -28,7 +28,7 @@ export const RobotStatus = ({
         </Badge>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex justify-between items-center">
           <span className="text-muted-foreground flex items-center gap-2">
             <Battery className="text-muted-foreground h-4 w-4" />
@@ -37,7 +37,7 @@ export const RobotStatus = ({
           <div className="flex items-center gap-2">
             <div className="h-2 w-24 bg-gray-200 rounded-full">
               <div 
-                className="h-full bg-orange-500 rounded-full"
+                className="h-full bg-orange-500 rounded-full transition-all duration-1000"
                 style={{ width: `${batteryLevel}%` }}
               />
             </div>
