@@ -1,4 +1,3 @@
-
 import { type PublicClient } from 'viem';
 
 // Contract configuration
@@ -10,15 +9,13 @@ export const useBlockchainUtils = () => {
   
   const stakeTokens = async (provider: any, amount: string) => {
     console.log('Staking tokens:', amount);
-    // In a real implementation, this would call the contract method
-    // e.g., contract.write.stakeTokens([amount])
+    // Replace with actual contract call: contract.write.stakeTokens([amount])
     return true;
   };
 
   const withdrawTokens = async (provider: any, amount: string) => {
     console.log('Withdrawing tokens:', amount);
-    // In a real implementation, this would call the contract method
-    // e.g., contract.write.withdrawTokens([amount])
+    // Replace with actual contract call: contract.write.withdrawTokens([amount])
     return true;
   };
 
@@ -26,30 +23,25 @@ export const useBlockchainUtils = () => {
   
   const getUserBalance = async (provider: any, address: string) => {
     console.log('Getting balance for:', address);
-    // In a real implementation, this would query the contract
-    // e.g., const result = await contract.read.getUserBalance([address])
+    // Replace with actual contract call: contract.read.balanceOf([address])
     return '85.0';
   };
 
   const getHighestStaker = async (provider: any) => {
     console.log('Getting highest staker');
-    // In a real implementation, this would query the contract
-    // e.g., const result = await contract.read.getHighestStaker()
+    // Replace with actual contract call: contract.read.getHighestStaker()
     return '0xd8da...6273';
   };
 
   const isController = async (provider: any, address: string) => {
     console.log('Checking if controller:', address);
-    // In a real implementation, this would compare with highest staker
-    // e.g., const highestStaker = await contract.read.getHighestStaker()
-    // return highestStaker.toLowerCase() === address.toLowerCase()
+    // Replace with actual contract implementation comparing with highest staker
     return true;
   };
 
   const getBotFee = async (provider: any) => {
     console.log('Getting bot fee');
-    // In a real implementation, this would query the contract
-    // e.g., const result = await contract.read.getBotFee()
+    // Replace with actual contract call: contract.read.getBotFee()
     return '2.5';
   };
 
@@ -57,8 +49,7 @@ export const useBlockchainUtils = () => {
   
   const getRobotLocation = async (robotId: string) => {
     console.log('Getting location for robot:', robotId);
-    // In a real implementation, this would query an API or contract
-    
+    // Replace with actual contract/API call to get robot location
     // Return different locations based on robot ID for demo purposes
     switch(robotId) {
       case 'robot-1': return { lat: 40.7128, lng: -74.0060 }; // New York
@@ -73,13 +64,13 @@ export const useBlockchainUtils = () => {
 
   const getRobotBatteryLevel = async (robotId: string) => {
     console.log('Getting battery level for robot:', robotId);
-    // In a real implementation, this would query an API or contract
-    return Math.floor(Math.random() * 40) + 60; // Random between 60-100%
+    // Replace with actual contract/API call to get battery level
+    return Math.floor(Math.random() * 40) + 60;
   };
 
   const getRobotUptime = async (robotId: string) => {
     console.log('Getting uptime for robot:', robotId);
-    // In a real implementation, this would query an API or contract
+    // Replace with actual contract/API call to get uptime
     const hours = Math.floor(Math.random() * 6);
     const minutes = Math.floor(Math.random() * 60);
     return `${hours}h ${minutes}m`;
@@ -87,8 +78,7 @@ export const useBlockchainUtils = () => {
 
   const sendRobotCommand = async (robotId: string, command: string) => {
     console.log(`Sending command to ${robotId}:`, command);
-    // In a real implementation, this would call the contract
-    // e.g., await contract.write.sendCommand([robotId, command])
+    // Replace with actual contract call: contract.write.sendCommand([robotId, command])
     return true;
   };
 
@@ -124,26 +114,58 @@ export const useBlockchainUtils = () => {
   // ========== RETURN ALL FUNCTIONS ==========
   
   return {
-    // Staking
     stakeTokens,
     withdrawTokens,
-    
-    // Balance and control
     getUserBalance,
     getHighestStaker,
     isController,
     getBotFee,
-    
-    // Robot status
     getRobotLocation,
     getRobotBatteryLevel,
     getRobotUptime,
     sendRobotCommand,
-    
-    // Utilities
     getTimeRemaining,
     getLeaderboard,
   };
 };
+
+/*
+Required Smart Contract Functionality:
+
+1. Staking System:
+   - stakeTokens(uint256 amount) - Allow users to stake DOT tokens
+   - withdrawTokens(uint256 amount) - Allow users to withdraw their staked tokens
+   - getStakedBalance(address user) - Get user's staked balance
+   - getTotalStaked() - Get total staked tokens
+   - getHighestStaker() - Get address of highest staker
+   - getStakingLeaderboard() - Get top stakers sorted by amount
+
+2. Robot Control:
+   - isController(address user) - Check if user is current controller
+   - verifyControl(bytes signature) - Verify controller's signature
+   - transferControl(address newController) - Transfer control to new highest staker
+   - getBotFee() - Get current fee rate in DOT/hour
+   - setBotFee(uint256 newFee) - Admin function to update fee rate
+
+3. Robot Commands:
+   - sendCommand(string robotId, string command) - Send movement command to robot
+   - getRobotStatus(string robotId) - Get robot's current status
+   - updateRobotLocation(string robotId, int256 lat, int256 lng) - Update robot location
+   - updateBatteryLevel(string robotId, uint256 level) - Update robot battery level
+   - updateUptime(string robotId, uint256 uptime) - Update robot uptime
+
+4. Events:
+   - StakeAdded(address user, uint256 amount)
+   - StakeWithdrawn(address user, uint256 amount)
+   - ControllerChanged(address oldController, address newController)
+   - CommandSent(address controller, string robotId, string command)
+   - RobotStatusUpdated(string robotId, uint256 batteryLevel, uint256 uptime)
+   - FeeUpdated(uint256 oldFee, uint256 newFee)
+
+5. Admin Functions:
+   - setEmergencyStop(bool stopped) - Emergency stop for critical functions
+   - withdrawFees() - Admin function to withdraw accumulated fees
+   - updateRobotConfig(string robotId, uint256[] config) - Update robot configuration
+*/
 
 export default useBlockchainUtils;
