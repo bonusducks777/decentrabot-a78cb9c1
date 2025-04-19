@@ -17,10 +17,10 @@ export const LiveLogFeed = () => {
 
   return (
     <Card className="neo-card">
-      <div className="p-6">
-        <h3 className="text-xl font-bold mb-4">Live Activity Log</h3>
+      <div className="p-4">
+        <h3 className="text-xl font-bold mb-2">Live Activity Log</h3>
         <ScrollArea className="h-[200px] rounded-md border">
-          <div className="p-4">
+          <div className="p-2">
             {logs.map((log, index) => (
               <div 
                 key={index} 

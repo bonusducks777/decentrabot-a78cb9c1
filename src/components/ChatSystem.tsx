@@ -54,10 +54,10 @@ export const ChatSystem = () => {
 
   return (
     <Card className="neo-card flex flex-col h-full">
-      <div className="p-4">
-        <h3 className="text-xl font-bold mb-2">Community Chat</h3>
-        <ScrollArea className="h-[300px] rounded-md border mb-4">
-          <div className="p-4">
+      <div className="p-2">
+        <h3 className="text-xl font-bold mb-2 px-2">Community Chat</h3>
+        <ScrollArea className="h-[340px] rounded-md border mb-2">
+          <div className="p-2">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
@@ -73,7 +73,7 @@ export const ChatSystem = () => {
             ))}
           </div>
         </ScrollArea>
-        <div className="flex gap-2">
+        <div className="flex gap-2 px-2">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}

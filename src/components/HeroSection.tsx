@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const HeroSection = () => {
   return (
@@ -15,15 +16,13 @@ export const HeroSection = () => {
             </p>
           </div>
           <div className="flex flex-col gap-2 min-[400px]:flex-row">
-            <Button className="neo-button text-lg px-8 py-6">
-              Connect Wallet
-            </Button>
+            <ConnectButton showBalance={false} />
           </div>
         </div>
       </div>
       
       {/* Background glow effect */}
-      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-cyber-blue/20 blur-[100px] rounded-full opacity-60"></div>
+      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60"></div>
     </div>
   );
 };

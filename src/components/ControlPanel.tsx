@@ -64,7 +64,7 @@ export const ControlPanel = () => {
 
   if (!isConnected) {
     return (
-      <Card className="neo-card p-8 text-center">
+      <Card className="neo-card p-4 text-center">
         <div className="flex flex-col items-center space-y-4">
           <p className="text-xl text-muted-foreground">
             🔒 Connect your Moonbeam wallet to interact with the robot
@@ -76,7 +76,7 @@ export const ControlPanel = () => {
 
   if (!isCurrentController) {
     return (
-      <Card className="neo-card p-8 text-center">
+      <Card className="neo-card p-4 text-center">
         <div className="flex flex-col items-center space-y-4">
           <p className="text-xl text-muted-foreground">
             🔒 Only the current controller can issue commands. Increase your stake to gain control.
@@ -87,11 +87,11 @@ export const ControlPanel = () => {
   }
 
   return (
-    <Card className="neo-card p-6">
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
+    <Card className="neo-card p-4 mt-4">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="lg:w-2/3">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
             <Button 
               variant="outline" 
               className={`${isVerified ? 'bg-orange-500/20' : 'glow-border'}`}
@@ -102,51 +102,49 @@ export const ControlPanel = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-5 gap-4">
+          <div className="flex flex-wrap justify-center gap-6">
             <Button 
-              className="h-16 w-16 rounded-full neo-button justify-self-center"
+              className="h-16 w-16 rounded-full neo-button"
               onClick={() => handleRobotCommand("up")}
               disabled={!isVerified}
             >
               ↑
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button justify-self-end"
+              className="h-16 w-16 rounded-full neo-button"
               onClick={() => handleRobotCommand("left")}
               disabled={!isVerified}
             >
               ←
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button justify-self-center"
+              className="h-16 w-16 rounded-full neo-button"
               onClick={() => handleRobotCommand("down")}
               disabled={!isVerified}
             >
               ↓
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button justify-self-start"
+              className="h-16 w-16 rounded-full neo-button"
               onClick={() => handleRobotCommand("right")}
               disabled={!isVerified}
             >
               →
             </Button>
-            <div className="flex items-center justify-center">
-              <span className="text-sm text-muted-foreground">
-                {isVerified ? "Ready to control" : "Verify first"}
-              </span>
-            </div>
           </div>
         </div>
         
-        <div className="col-span-4 flex flex-col justify-center">
+        <div className="lg:w-1/3 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-border lg:pl-4 pt-4 lg:pt-0 mt-4 lg:mt-0">
           <div className="space-y-4">
             <div className="text-lg font-semibold">Current Status</div>
             <div className="text-sm text-muted-foreground">
               Control verified: {isVerified ? "Yes" : "No"}
             </div>
             <div className="text-sm text-muted-foreground">
-              Last command: {lastCommand}
+              Last command: {lastCommand || "None"}
+            </div>
+            <div className="text-sm text-orange-400">
+              <span className="text-muted-foreground">Cost:</span> 2.5 DOT/hour
             </div>
           </div>
         </div>

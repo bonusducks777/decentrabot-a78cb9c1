@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
@@ -86,22 +87,22 @@ export const StakeDashboard = () => {
   return (
     <Card className="neo-card">
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-cyber-cyan">(Moonbeam)</span></h3>
+        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-orange-400">(Moonbeam)</span></h3>
         
         <div className="space-y-4">
           <div className="flex justify-between items-center border-b border-border pb-3">
             <span className="text-muted-foreground">Your Stake:</span>
-            <span className="text-xl font-bold text-cyber-cyan">{userBalance} DOT</span>
+            <span className="text-xl font-bold text-orange-400">{userBalance} DOT</span>
           </div>
           
           <div className="flex justify-between items-center border-b border-border pb-3">
             <span className="text-muted-foreground">Top Stake:</span>
-            <span className="text-xl font-bold text-cyber-cyan">{topStake} DOT</span>
+            <span className="text-xl font-bold text-orange-400">{topStake} DOT</span>
           </div>
           
           <div className="flex justify-between items-center pb-3">
             <span className="text-muted-foreground">Controller:</span>
-            <span className="text-sm font-mono text-cyber-cyan">0xd8da...6273</span>
+            <span className="text-sm font-mono text-orange-400">0xd8da...6273</span>
           </div>
         </div>
         
@@ -137,7 +138,7 @@ export const StakeDashboard = () => {
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-cyber-blue" disabled={!isConnected}>Withdraw</Button>
+              <Button variant="outline" className="border-orange-400" disabled={!isConnected}>Withdraw</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

@@ -44,7 +44,7 @@ const AppPage = () => {
         <div className="flex items-center gap-3 mb-6">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Bot Control Center</h1>
           <Select value={selectedRobot} onValueChange={handleRobotChange}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[240px]">
               <SelectValue placeholder="Select robot" />
             </SelectTrigger>
             <SelectContent>
@@ -60,15 +60,14 @@ const AppPage = () => {
         {isConnected ? (
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
-              <RobotCameraFeed />
-            </div>
-            <div className="col-span-12 lg:col-span-4">
-              <ChatSystem />
-            </div>
-            <div className="col-span-12 lg:col-span-8">
+              <RobotCameraFeed 
+                robotName={robots.find(r => r.id === selectedRobot)?.name} 
+                viewerCount={5} // Using the same value as in the RobotFeedCard
+              />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+              <ChatSystem />
               <StakeDashboard />
             </div>
             <div className="col-span-12 lg:col-span-6">
