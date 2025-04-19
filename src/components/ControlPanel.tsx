@@ -11,7 +11,8 @@ export const ControlPanel = () => {
   const [isCurrentController, setIsCurrentController] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+  const [lastCommand, setLastCommand] = useState("");
+
   const contract = useContractFunctions();
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export const ControlPanel = () => {
     // This would send the command to the robot in a real application
     toast.success(`Command sent: ${command}`);
     console.log(`Robot command: ${command}`);
+    setLastCommand(command);
   };
 
   if (!isConnected) {
@@ -84,61 +86,68 @@ export const ControlPanel = () => {
   }
 
   return (
-    <Card className="neo-card p-8">
-      <div className="flex flex-col space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-cyber-blue to-cyber-cyan bg-clip-text text-transparent">Control Panel</h3>
-          <Button 
-            variant="outline" 
-            className={`${isVerified ? 'bg-cyber-blue/20' : 'glow-border'}`}
-            onClick={handleVerifyControl}
-            disabled={isVerified || loading}
-          >
-            {loading ? "Verifying..." : isVerified ? "Control Verified" : "Sign to Verify Control"}
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-6 py-8">
-          <div className="col-span-3 flex justify-center">
+    <Card className="neo-card p-6">
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-8">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              variant="outline" 
+              className={`${isVerified ? 'bg-orange-500/20' : 'glow-border'}`}
+              onClick={handleVerifyControl}
+              disabled={isVerified || loading}
+            >
+              {loading ? "Verifying..." : isVerified ? "Control Verified" : "Sign to Verify Control"}
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-4">
+            <Button 
+              className="h-16 w-16 rounded-full neo-button justify-self-center"
               onClick={() => handleRobotCommand("up")}
               disabled={!isVerified}
             >
               ↑
             </Button>
-          </div>
-          <div className="flex justify-end">
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button justify-self-end"
               onClick={() => handleRobotCommand("left")}
               disabled={!isVerified}
             >
               ←
             </Button>
-          </div>
-          <div className="flex justify-center">
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button justify-self-center"
               onClick={() => handleRobotCommand("down")}
               disabled={!isVerified}
             >
               ↓
             </Button>
-          </div>
-          <div className="flex justify-start">
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button justify-self-start"
               onClick={() => handleRobotCommand("right")}
               disabled={!isVerified}
             >
               →
             </Button>
+            <div className="flex items-center justify-center">
+              <span className="text-sm text-muted-foreground">
+                {isVerified ? "Ready to control" : "Verify first"}
+              </span>
+            </div>
           </div>
         </div>
         
-        <div className="text-center text-sm text-muted-foreground">
-          Commands are sent in real-time to the connected robot
+        <div className="col-span-4 flex flex-col justify-center">
+          <div className="space-y-4">
+            <div className="text-lg font-semibold">Current Status</div>
+            <div className="text-sm text-muted-foreground">
+              Control verified: {isVerified ? "Yes" : "No"}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Last command: {lastCommand}
+            </div>
+          </div>
         </div>
       </div>
     </Card>

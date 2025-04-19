@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Battery, Clock, Users } from "lucide-react";
+import { Battery, Clock, Users, TrendingUp } from "lucide-react";
 
 interface RobotFeedCardProps {
   id: string;
@@ -14,6 +14,8 @@ interface RobotFeedCardProps {
   batteryLevel: number;
   uptime: string;
   operatorCount: number;
+  topStake: number;
+  chargeRate: number;
 }
 
 export const RobotFeedCard = ({
@@ -24,7 +26,9 @@ export const RobotFeedCard = ({
   thumbnailUrl,
   batteryLevel,
   uptime,
-  operatorCount
+  operatorCount,
+  topStake,
+  chargeRate
 }: RobotFeedCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group neo-card">
@@ -65,7 +69,7 @@ export const RobotFeedCard = ({
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-12 bg-gray-200 rounded-full">
                 <div 
-                  className="h-full bg-green-500 rounded-full"
+                  className="h-full bg-orange-500 rounded-full"
                   style={{ width: `${batteryLevel}%` }}
                 />
               </div>
@@ -74,18 +78,18 @@ export const RobotFeedCard = ({
           </div>
           
           <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span>{uptime}</span>
+            <TrendingUp className="h-3.5 w-3.5" />
+            <span>{topStake} DOT</span>
           </div>
           
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
-            <span>{operatorCount} operators</span>
+            <span>{viewerCount} viewers</span>
           </div>
           
           <div className="flex items-center gap-1.5 text-muted-foreground">
-            <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-            <span>{isActive ? 'Online' : 'Offline'}</span>
+            <Clock className="h-3.5 w-3.5" />
+            <span>{chargeRate} DOT/hr</span>
           </div>
         </div>
         

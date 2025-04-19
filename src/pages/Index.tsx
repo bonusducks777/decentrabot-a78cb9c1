@@ -1,4 +1,3 @@
-
 import { HeroSection } from "@/components/HeroSection";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
@@ -10,11 +9,13 @@ const Index = () => {
       id: "robot-1", 
       title: "Warehouse Bot Alpha", 
       isActive: true, 
-      viewerCount: 42,
+      viewerCount: 5,
       thumbnailUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
       batteryLevel: 85,
       uptime: "4h 12m",
-      operatorCount: 5
+      operatorCount: 5,
+      topStake: 125.5,
+      chargeRate: 2.5
     },
     { 
       id: "robot-2", 
