@@ -64,7 +64,7 @@ export const ControlPanel = () => {
       <Card className="neo-card p-8 text-center">
         <div className="flex flex-col items-center space-y-4">
           <p className="text-xl text-muted-foreground">
-            🔒 Connect your wallet to interact with the robot
+            🔒 Connect your Moonbeam wallet to interact with the robot
           </p>
         </div>
       </Card>

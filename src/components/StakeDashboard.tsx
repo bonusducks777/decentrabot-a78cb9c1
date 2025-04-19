@@ -86,7 +86,7 @@ export const StakeDashboard = () => {
   return (
     <Card className="neo-card">
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-4">Stake Dashboard</h3>
+        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-cyber-cyan">(Moonbeam)</span></h3>
         
         <div className="space-y-4">
           <div className="flex justify-between items-center border-b border-border pb-3">

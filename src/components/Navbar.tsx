@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -11,6 +12,7 @@ export const Navbar = () => {
             <span className="font-bold text-2xl bg-gradient-to-r from-cyber-blue to-cyber-cyan bg-clip-text text-transparent">
               DECENTRABOT
             </span>
+            <span className="text-xs px-2 py-1 rounded-full bg-cyber-blue/20 text-cyber-cyan">Moonbeam</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-foreground/80 hover:text-foreground transition-colors">
@@ -38,7 +40,7 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <ConnectButton showBalance={false} />
+          <ConnectButton showBalance={false} chainStatus="icon" />
         </div>
       </div>
     </nav>
