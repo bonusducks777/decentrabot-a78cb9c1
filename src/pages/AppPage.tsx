@@ -6,10 +6,11 @@ import { ControlPanel } from "@/components/ControlPanel";
 import { StakeDashboard } from "@/components/StakeDashboard";
 import { LiveLogFeed } from "@/components/LiveLogFeed";
 import { RobotCameraFeed } from "@/components/RobotCameraFeed";
+import { RobotStatus } from "@/components/RobotStatus";
 import { ChatSystem } from "@/components/ChatSystem";
 import { Badge } from "@/components/ui/badge";
 
-const Bot = () => {
+const AppPage = () => {
   const { isConnected } = useAccount();
 
   return (
@@ -29,6 +30,7 @@ const Bot = () => {
             <ControlPanel />
           </div>
           <div className="space-y-6">
+            <RobotStatus />
             <StakeDashboard />
             <LiveLogFeed />
             <ChatSystem />
@@ -40,4 +42,4 @@ const Bot = () => {
   );
 };
 
-export default Bot;
+export default AppPage;

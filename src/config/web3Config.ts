@@ -5,7 +5,7 @@ import { http } from 'wagmi';
 
 const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
 
-export const config = getDefaultConfig({
+const web3Config = getDefaultConfig({
   appName: 'Decentrabot',
   projectId,
   chains: [moonbeam, mainnet],
@@ -15,5 +15,4 @@ export const config = getDefaultConfig({
   },
 });
 
-// Export the config directly since publicClient and webSocketPublicClient are not available
-export { config };
+export { web3Config as config };
