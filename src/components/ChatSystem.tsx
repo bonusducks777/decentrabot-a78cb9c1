@@ -53,9 +53,9 @@ export const ChatSystem = () => {
   };
 
   return (
-    <Card className="neo-card flex flex-col h-[600px]">
+    <Card className="neo-card flex flex-col h-full">
       <div className="p-2 flex flex-col h-full">
-        <h3 className="text-lg font-bold mb-1 px-2">Community Chat</h3>
+        <h3 className="text-lg font-bold mb-1">Community Chat</h3>
         <ScrollArea className="flex-1 rounded-md border mb-2">
           <div className="p-2">
             {messages.map((msg) => (
@@ -73,14 +73,14 @@ export const ChatSystem = () => {
             ))}
           </div>
         </ScrollArea>
-        <div className="flex gap-1 px-2">
+        <div className="flex gap-1">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={isConnected ? "Type your message..." : "Connect wallet to chat"}
             disabled={!isConnected}
-            className="flex-1 h-8 text-sm"
+            className="flex-1 h-8 text-xs"
           />
           <Button 
             onClick={handleSendMessage} 

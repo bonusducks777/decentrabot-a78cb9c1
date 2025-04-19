@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import { Button } from "@/components/ui/button";
@@ -103,31 +104,35 @@ export const StakeDashboard = () => {
   };
 
   return (
-    <Card className="neo-card">
-      <div className="p-2">
-        <h3 className="text-base font-bold mb-2">Stake Dashboard <span className="text-xs text-orange-400">(Westend)</span></h3>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between items-center border-b border-border pb-1">
-            <span className="text-sm text-muted-foreground">Your Stake:</span>
-            <span className="text-base font-bold text-orange-400">{userBalance} WND</span>
-          </div>
+    <Card className="neo-card h-full">
+      <div className="p-1 flex flex-col justify-between h-full">
+        <div>
+          <h3 className="text-sm font-bold mb-1 flex items-center">
+            Stake Dashboard <span className="text-xs text-orange-400 ml-1">(Westend)</span>
+          </h3>
           
-          <div className="flex justify-between items-center border-b border-border pb-1">
-            <span className="text-sm text-muted-foreground">Top Stake:</span>
-            <span className="text-base font-bold text-orange-400">{topStake} WND</span>
-          </div>
-          
-          <div className="flex justify-between items-center pb-1">
-            <span className="text-sm text-muted-foreground">Controller:</span>
-            <span className="text-xs font-mono text-orange-400">{topStaker}</span>
+          <div className="space-y-1">
+            <div className="flex justify-between items-center border-b border-border pb-1">
+              <span className="text-xs text-muted-foreground">Your Stake:</span>
+              <span className="text-sm font-bold text-orange-400">{userBalance} WND</span>
+            </div>
+            
+            <div className="flex justify-between items-center border-b border-border pb-1">
+              <span className="text-xs text-muted-foreground">Top Stake:</span>
+              <span className="text-sm font-bold text-orange-400">{topStake} WND</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Controller:</span>
+              <span className="text-xs font-mono text-orange-400">{topStaker}</span>
+            </div>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-2 mt-2">
+        <div className="grid grid-cols-2 gap-2 mt-1">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="neo-button h-8 text-xs" disabled={!isConnected}>Stake More</Button>
+              <Button className="neo-button h-7 text-xs py-0" disabled={!isConnected}>Stake More</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -156,7 +161,7 @@ export const StakeDashboard = () => {
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-orange-400 h-8 text-xs" disabled={!isConnected}>Withdraw</Button>
+              <Button variant="outline" className="border-orange-400 h-7 text-xs py-0" disabled={!isConnected}>Withdraw</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

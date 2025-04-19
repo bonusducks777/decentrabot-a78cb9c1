@@ -62,13 +62,16 @@ const AppPage = () => {
               <RobotLocationMap />
             </div>
             
-            {/* Right Column */}
-            <div className="col-span-12 lg:col-span-4 space-y-2">
-              {/* Reduced height of ChatSystem */}
-              <div className="h-[300px]">
+            {/* Right Column - Fixed layout to prevent overlapping */}
+            <div className="col-span-12 lg:col-span-4 space-y-4">
+              {/* Fixed height for ChatSystem */}
+              <div className="h-[280px]">
                 <ChatSystem />
               </div>
-              <StakeDashboard />
+              {/* Dashboard with fixed height */}
+              <div className="h-[180px]">
+                <StakeDashboard />
+              </div>
               <StakingLeaderboard />
               <RobotStatus />
             </div>
