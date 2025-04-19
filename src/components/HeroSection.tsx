@@ -15,13 +15,21 @@ export const HeroSection = () => {
               Stake DOT. Outbid. Take command of real-world robotics.
             </p>
           </div>
-          <div className="flex flex-col gap-2 min-[400px]:flex-row">
-            <ConnectButton showBalance={false} />
+          <div className="w-full max-w-sm">
+            <ConnectButton.Custom>
+              {({ openConnectModal }) => (
+                <Button 
+                  onClick={openConnectModal} 
+                  className="w-full neo-button"
+                >
+                  Connect Wallet
+                </Button>
+              )}
+            </ConnectButton.Custom>
           </div>
         </div>
       </div>
       
-      {/* Background glow effect */}
       <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60"></div>
     </div>
   );

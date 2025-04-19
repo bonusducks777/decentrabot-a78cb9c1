@@ -1,4 +1,3 @@
-
 import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -11,7 +10,7 @@ import { RobotCameraFeed } from "@/components/RobotCameraFeed";
 import { RobotStatus } from "@/components/RobotStatus";
 import { ChatSystem } from "@/components/ChatSystem";
 import { StakingLeaderboard } from "@/components/StakingLeaderboard";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RobotLocationMap } from "@/components/RobotLocationMap";
 
 const AppPage = () => {
   const { isConnected } = useAccount();
@@ -41,39 +40,27 @@ const AppPage = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1 py-6 container">
-        <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Bot Control Center</h1>
-          <Select value={selectedRobot} onValueChange={handleRobotChange}>
-            <SelectTrigger className="w-[240px]">
-              <SelectValue placeholder="Select robot" />
-            </SelectTrigger>
-            <SelectContent>
-              {robots.map(robot => (
-                <SelectItem key={robot.id} value={robot.id}>
-                  {robot.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
         {isConnected ? (
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
               <RobotCameraFeed 
+                robotId={selectedRobot}
                 robotName={robots.find(r => r.id === selectedRobot)?.name} 
-                viewerCount={5} // Using the same value as in the RobotFeedCard
+                viewerCount={5}
               />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+            <div className="col-span-12 lg:col-span-4">
               <ChatSystem />
               <StakeDashboard />
             </div>
-            <div className="col-span-12 lg:col-span-6">
+            <div className="col-span-12 lg:col-span-4">
               <RobotStatus />
             </div>
-            <div className="col-span-12 lg:col-span-6">
+            <div className="col-span-12 lg:col-span-4">
+              <RobotLocationMap />
+            </div>
+            <div className="col-span-12 lg:col-span-4">
               <StakingLeaderboard />
             </div>
             <div className="col-span-12">
@@ -86,6 +73,7 @@ const AppPage = () => {
             <p className="text-center max-w-md mb-6">
               Please connect your wallet to view the robot feed and control panel.
             </p>
+            {/* <ConnectButton /> */}
           </div>
         )}
       </main>

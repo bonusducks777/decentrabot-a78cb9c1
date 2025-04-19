@@ -1,19 +1,20 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Activity, Users } from "lucide-react";
+import { Activity, Users, Clock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RobotCameraFeedProps {
   robotName?: string;
   viewerCount?: number;
+  chargeRate?: number;
 }
 
 export const RobotCameraFeed = ({ 
   robotName = "Warehouse Bot Alpha", 
-  viewerCount = 42 
+  viewerCount = 5,
+  chargeRate = 2.5
 }: RobotCameraFeedProps) => {
   const { isConnected } = useAccount();
   
@@ -31,27 +32,17 @@ export const RobotCameraFeed = ({
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold">Live Feed</h3>
-          {isConnected && (
-            <Select defaultValue="robot-1">
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select robot" />
-              </SelectTrigger>
-              <SelectContent>
-                {robots.map(robot => (
-                  <SelectItem key={robot.id} value={robot.id}>
-                    {robot.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
         </div>
         
         {isConnected && (
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">
-              <Users className="h-4 w-4 text-cyber-cyan" />
+              <Users className="h-4 w-4 text-orange-400" />
               <span>{viewerCount} watching</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-orange-400" />
+              <span>{chargeRate} DOT/hr</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
