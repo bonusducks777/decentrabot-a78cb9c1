@@ -61,17 +61,15 @@ const AppPage = () => {
               <ControlPanel />
             </div>
             <div className="col-span-12 lg:col-span-4 space-y-2">
-              <ChatSystem />
-              <StakeDashboard />
-            </div>
-            <div className="col-span-12 lg:col-span-4 mt-2">
-              <RobotStatus />
+              <div className="grid grid-cols-1 gap-2">
+                <RobotStatus />
+                <StakingLeaderboard />
+                <ChatSystem />
+                <StakeDashboard />
+              </div>
             </div>
             <div className="col-span-12 lg:col-span-8 mt-2">
               <RobotLocationMap />
-            </div>
-            <div className="col-span-12 lg:col-span-4 mt-2">
-              <StakingLeaderboard />
             </div>
             <div className="col-span-12 mt-2">
               <LiveLogFeed />

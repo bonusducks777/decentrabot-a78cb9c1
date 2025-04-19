@@ -54,43 +54,45 @@ export const StakingLeaderboard = () => {
   
   return (
     <Card className="neo-card p-4">
-      <div className="mb-4">
+      <div className="mb-2">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Trophy className="h-5 w-5 text-yellow-500" />
           Staking Leaderboard
         </h3>
       </div>
       
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Rank</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead className="text-right">Stake (WND)</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leaderboardData.map((entry) => (
-            <TableRow key={entry.position} className={entry.isCurrentUser ? "bg-orange-500/10" : ""}>
-              <TableCell className="font-medium">{entry.position}</TableCell>
-              <TableCell className={entry.isCurrentUser ? "text-orange-400" : ""}>
-                {entry.address}
-                {entry.position === 1 && (
-                  <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded-full">
-                    Controller
-                  </span>
-                )}
-              </TableCell>
-              <TableCell className="text-right">{entry.stake}</TableCell>
+      <div className="max-h-[200px] overflow-y-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-12">Rank</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead className="text-right">Stake</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {leaderboardData.map((entry) => (
+              <TableRow key={entry.position} className={entry.isCurrentUser ? "bg-orange-500/10" : ""}>
+                <TableCell className="font-medium">{entry.position}</TableCell>
+                <TableCell className={entry.isCurrentUser ? "text-orange-400" : ""}>
+                  {entry.address}
+                  {entry.position === 1 && (
+                    <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded-full">
+                      Controller
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">{entry.stake}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       
-      <div className="mt-4 p-3 bg-background/50 rounded-md border border-border flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm">
-          <Clock className="h-4 w-4 text-orange-400" />
-          Current session ends in:
+      <div className="mt-2 p-2 bg-background/50 rounded-md border border-border flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1">
+          <Clock className="h-3 w-3 text-orange-400" />
+          Session ends:
         </div>
         <div className="font-mono text-orange-400">
           {timeRemaining.hours}h {timeRemaining.minutes}m
