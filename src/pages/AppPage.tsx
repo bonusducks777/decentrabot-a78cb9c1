@@ -42,28 +42,12 @@ const AppPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1 py-6 container">
+      <main className="flex-1 py-6 container px-4 animate-fade-in">
         {isConnected ? (
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-2xl font-bold">
-                  <Select value={selectedRobot} onValueChange={handleRobotChange}>
-                    <SelectTrigger className="w-[220px] border-none bg-transparent px-0 font-bold focus:ring-0">
-                      <SelectValue placeholder="Select a robot" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {robots.map((robot) => (
-                        <SelectItem key={robot.id} value={robot.id}>
-                          {robot.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </h2>
-              </div>
               <RobotCameraFeed 
                 robotId={selectedRobot}
                 robotName={selectedRobotData.name} 
@@ -72,7 +56,7 @@ const AppPage = () => {
               />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
               <ChatSystem />
               <StakeDashboard />
             </div>
@@ -90,7 +74,7 @@ const AppPage = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-10 bg-card rounded-lg border border-border">
+          <div className="flex flex-col items-center justify-center p-10 bg-card rounded-lg border border-border shadow-lg animate-scale-in">
             <h2 className="text-2xl font-bold mb-4">Connect Your Wallet</h2>
             <p className="text-center max-w-md mb-6">
               Please connect your wallet to view the robot feed and control panel.

@@ -31,10 +31,21 @@ export const RobotCameraFeed = ({
   ];
 
   return (
-    <Card className="neo-card p-4 mb-6 overflow-hidden">
+    <Card className="neo-card p-4 mb-6 overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
-          <h3 className="text-lg font-semibold">Live Feed</h3>
+          <Select value={robotId} onValueChange={(value) => console.log(value)}>
+            <SelectTrigger className="w-[220px] border-none bg-transparent px-0 font-bold focus:ring-0">
+              <SelectValue placeholder={robotName} />
+            </SelectTrigger>
+            <SelectContent>
+              {robots.map((robot) => (
+                <SelectItem key={robot.id} value={robot.id}>
+                  {robot.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         
         {isConnected && (
@@ -43,19 +54,19 @@ export const RobotCameraFeed = ({
               <Users className="h-4 w-4 text-orange-400" />
               <span>{viewerCount} watching</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full animate-pulse">
               <Clock className="h-4 w-4 text-orange-400" />
-              <span>{chargeRate} DOT/hr</span>
+              <span className="font-semibold text-orange-400">{chargeRate} DOT/hr</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
               <span className="text-xs text-green-400">LIVE</span>
             </div>
           </div>
         )}
       </div>
       
-      <div className="relative aspect-video bg-black/70 rounded-md overflow-hidden">
+      <div className="relative aspect-video bg-black/70 rounded-md overflow-hidden transition-transform duration-300 transform hover:scale-[1.01]">
         {isConnected ? (
           <>
             <div className="absolute inset-0 grid-pattern opacity-20"></div>
@@ -71,7 +82,7 @@ export const RobotCameraFeed = ({
             <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-md text-sm">
               <span className="text-white">{robotName}</span>
             </div>
-            <div className="absolute top-4 right-4 bg-red-500/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium">
+            <div className="absolute top-4 right-4 bg-red-500/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium animate-pulse">
               LIVE
             </div>
           </>

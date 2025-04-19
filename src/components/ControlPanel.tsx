@@ -64,7 +64,7 @@ export const ControlPanel = () => {
 
   if (!isConnected) {
     return (
-      <Card className="neo-card p-4 text-center">
+      <Card className="neo-card p-4 text-center animate-fade-in">
         <div className="flex flex-col items-center space-y-4">
           <p className="text-xl text-muted-foreground">
             🔒 Connect your Moonbeam wallet to interact with the robot
@@ -76,7 +76,7 @@ export const ControlPanel = () => {
 
   if (!isCurrentController) {
     return (
-      <Card className="neo-card p-4 text-center">
+      <Card className="neo-card p-4 text-center animate-fade-in">
         <div className="flex flex-col items-center space-y-4">
           <p className="text-xl text-muted-foreground">
             🔒 Only the current controller can issue commands. Increase your stake to gain control.
@@ -87,45 +87,45 @@ export const ControlPanel = () => {
   }
 
   return (
-    <Card className="neo-card p-4 mt-4">
+    <Card className="neo-card p-4 mt-4 transition-all duration-300 hover:shadow-lg animate-fade-in">
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="lg:w-2/3">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">Control Panel</h3>
             <Button 
-              variant="outline" 
-              className={`${isVerified ? 'bg-orange-500/20' : 'glow-border'}`}
+              variant={isVerified ? "outline" : "default"}
+              className={`transition-all duration-300 ${isVerified ? 'bg-orange-500/20' : 'glow-border hover:scale-105'}`}
               onClick={handleVerifyControl}
               disabled={isVerified || loading}
             >
-              {loading ? "Verifying..." : isVerified ? "Control Verified" : "Sign to Verify Control"}
+              {loading ? "Verifying..." : isVerified ? "✓ Control Verified" : "Sign to Verify Control"}
             </Button>
           </div>
           
           <div className="flex flex-wrap justify-center gap-6">
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("up")}
               disabled={!isVerified}
             >
               ↑
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("left")}
               disabled={!isVerified}
             >
               ←
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("down")}
               disabled={!isVerified}
             >
               ↓
             </Button>
             <Button 
-              className="h-16 w-16 rounded-full neo-button"
+              className="h-16 w-16 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("right")}
               disabled={!isVerified}
             >
@@ -138,13 +138,10 @@ export const ControlPanel = () => {
           <div className="space-y-4">
             <div className="text-lg font-semibold">Current Status</div>
             <div className="text-sm text-muted-foreground">
-              Control verified: {isVerified ? "Yes" : "No"}
+              Control verified: <span className={isVerified ? "text-green-400" : "text-red-400"}>{isVerified ? "Yes" : "No"}</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              Last command: {lastCommand || "None"}
-            </div>
-            <div className="text-sm text-orange-400">
-              <span className="text-muted-foreground">Cost:</span> 2.5 DOT/hour
+              Last command: <span className="font-mono">{lastCommand || "None"}</span>
             </div>
           </div>
         </div>

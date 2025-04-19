@@ -73,7 +73,8 @@ export const RobotLocationMap = () => {
           Live Location
         </div>
       </div>
-      <style jsx>{`
+      <style>
+        {`
         @keyframes pulse {
           0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
           70% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
@@ -91,7 +92,8 @@ export const RobotLocationMap = () => {
           transform: translate(-50%, -50%);
           animation: pulse 2s infinite;
         }
-      `}</style>
+        `}
+      </style>
     </Card>
   );
 };
