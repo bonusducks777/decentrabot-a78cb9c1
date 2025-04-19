@@ -16,7 +16,16 @@ import Index from "./pages/Index";
 import AppPage from "./pages/AppPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Create a client with good defaults
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <WagmiProvider config={config}>

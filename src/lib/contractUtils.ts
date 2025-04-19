@@ -1,5 +1,4 @@
-
-import { type PublicClient } from 'wagmi';
+import { type PublicClient } from 'viem';
 
 // Placeholder for actual contract address
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000';
