@@ -11,12 +11,12 @@ export const LiveLogFeed = () => {
   
   const logs = [
     { time: "14:32:45", action: "Control verified" },
-    { time: "14:31:22", action: "0xab12...9f3d increased stake to 85.0 DOT" },
+    { time: "14:31:22", action: "0xab12...9f3d increased stake to 85.0 WND" },
     { time: "14:30:05", action: "New controller: 0xd8da...6273" },
-    { time: "14:28:17", action: "Stake withdrawn: 12.5 DOT" },
+    { time: "14:28:17", action: "Stake withdrawn: 12.5 WND" },
     { time: "14:25:03", action: "0xd8da...6273 is now in control" },
-    { time: "14:24:55", action: "0xd8da...6273 increased stake to 125.5 DOT" },
-    { time: "14:20:11", action: "Stake added: 42.3 DOT" },
+    { time: "14:24:55", action: "0xd8da...6273 increased stake to 125.5 WND" },
+    { time: "14:20:11", action: "Stake added: 42.3 WND" },
     { time: "14:18:40", action: "0xab12...9f3d connected" },
   ];
 
@@ -24,12 +24,12 @@ export const LiveLogFeed = () => {
     <Collapsible 
       open={isExpanded} 
       onOpenChange={setIsExpanded}
-      className="w-full transition-all duration-300 ease-in-out"
+      className="w-full transition-all duration-300 ease-in-out mb-4"
     >
-      <Card className={`neo-card overflow-hidden transition-all duration-300 ${isExpanded ? "h-auto" : "h-8"}`}>
-        <div className={`p-2 ${isExpanded ? "" : "py-1"}`}>
+      <Card className={`neo-card overflow-hidden transition-all duration-300 ${isExpanded ? "h-auto" : "h-16"}`}>
+        <div className={`p-4 ${isExpanded ? "" : "py-1"}`}>
           <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center cursor-pointer">
+            <div className="flex justify-between items-center cursor-pointer py-2">
               <div className="flex items-center space-x-2">
                 <h3 className="text-sm font-medium">Live Activity Log</h3>
               </div>

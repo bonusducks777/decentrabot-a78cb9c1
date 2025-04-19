@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Users, Clock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSearchParams } from "react-router-dom";
 
 interface RobotCameraFeedProps {
   robotId?: string;
@@ -14,12 +15,13 @@ interface RobotCameraFeedProps {
 }
 
 export const RobotCameraFeed = ({ 
-  robotId,
+  robotId = "robot-1",
   robotName = "Warehouse Bot Alpha", 
   viewerCount = 5,
   chargeRate = 2.5
 }: RobotCameraFeedProps) => {
   const { isConnected } = useAccount();
+  const [searchParams, setSearchParams] = useSearchParams();
   
   const robots = [
     { id: "robot-1", name: "Warehouse Bot Alpha" },
@@ -30,11 +32,15 @@ export const RobotCameraFeed = ({
     { id: "robot-6", name: "Cleaning Bot" },
   ];
 
+  const handleRobotChange = (value) => {
+    setSearchParams({ robot: value });
+  };
+
   return (
     <Card className="neo-card p-3 mb-4 overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-3">
-          <Select value={robotId} onValueChange={(value) => console.log(value)}>
+          <Select value={robotId} onValueChange={handleRobotChange}>
             <SelectTrigger className="w-[220px] border-none bg-transparent px-0 font-bold focus:ring-0">
               <SelectValue placeholder={robotName} />
             </SelectTrigger>
@@ -56,7 +62,7 @@ export const RobotCameraFeed = ({
             </div>
             <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full">
               <Clock className="h-4 w-4 text-orange-400" />
-              <span className="font-semibold text-orange-400">{chargeRate} DOT/hr</span>
+              <span className="font-semibold text-orange-400">{chargeRate} WND/hr</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 soft-pulse"></div>

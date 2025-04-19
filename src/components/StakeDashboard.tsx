@@ -11,24 +11,24 @@ import { toast } from "@/components/ui/sonner";
 export const StakeDashboard = () => {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
-  const [userBalance, setUserBalance] = useState("85.0");
-  const [topStake, setTopStake] = useState("125.5");
-  const [topStaker, setTopStaker] = useState("0xd8da...6273");
+  const [userBalance, setUserBalance] = useState("0.0");
+  const [topStake, setTopStake] = useState("0.0");
+  const [topStaker, setTopStaker] = useState("0x0000...0000");
   const [stakeAmount, setStakeAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const { stakeTokens, withdrawTokens, getUserBalance, getHighestStaker } = useBlockchainUtils();
+  const blockchainUtils = useBlockchainUtils();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isConnected && address && publicClient) {
+      if (isConnected && address) {
         try {
-          const balance = await getUserBalance(publicClient, address);
+          const balance = await blockchainUtils.getUserBalance();
           setUserBalance(balance);
           
-          const highestStaker = await getHighestStaker(publicClient);
-          setTopStaker(highestStaker);
+          const highestStaker = await blockchainUtils.getHighestStaker();
+          setTopStaker(highestStaker.slice(0, 6) + '...' + highestStaker.slice(-4));
           
           // For demo purposes, we'll set a fixed top stake
           setTopStake("125.5");
@@ -39,7 +39,7 @@ export const StakeDashboard = () => {
     };
     
     fetchData();
-  }, [isConnected, address, publicClient, getUserBalance, getHighestStaker]);
+  }, [isConnected, address, blockchainUtils]);
 
   const handleStake = async () => {
     if (!isConnected || !address) {
@@ -54,9 +54,9 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await stakeTokens(publicClient, stakeAmount);
+      const success = await blockchainUtils.stakeTokens(stakeAmount);
       if (success) {
-        toast.success(`Successfully staked ${stakeAmount} DOT`);
+        toast.success(`Successfully staked ${stakeAmount} WND`);
         setStakeAmount("");
         // Update the balance (mock for now)
         setUserBalance((parseFloat(userBalance) + parseFloat(stakeAmount)).toFixed(1));
@@ -89,9 +89,9 @@ export const StakeDashboard = () => {
     
     setIsLoading(true);
     try {
-      const success = await withdrawTokens(publicClient, withdrawAmount);
+      const success = await blockchainUtils.withdrawTokens(withdrawAmount);
       if (success) {
-        toast.success(`Successfully withdrawn ${withdrawAmount} DOT`);
+        toast.success(`Successfully withdrawn ${withdrawAmount} WND`);
         setWithdrawAmount("");
         // Update the balance (mock for now)
         setUserBalance((parseFloat(userBalance) - parseFloat(withdrawAmount)).toFixed(1));
@@ -109,17 +109,17 @@ export const StakeDashboard = () => {
   return (
     <Card className="neo-card">
       <div className="p-4">
-        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-orange-400">(Moonbeam)</span></h3>
+        <h3 className="text-xl font-bold mb-4">Stake Dashboard <span className="text-xs text-orange-400">(Westend)</span></h3>
         
         <div className="space-y-3">
           <div className="flex justify-between items-center border-b border-border pb-2">
             <span className="text-muted-foreground">Your Stake:</span>
-            <span className="text-xl font-bold text-orange-400">{userBalance} DOT</span>
+            <span className="text-xl font-bold text-orange-400">{userBalance} WND</span>
           </div>
           
           <div className="flex justify-between items-center border-b border-border pb-2">
             <span className="text-muted-foreground">Top Stake:</span>
-            <span className="text-xl font-bold text-orange-400">{topStake} DOT</span>
+            <span className="text-xl font-bold text-orange-400">{topStake} WND</span>
           </div>
           
           <div className="flex justify-between items-center pb-2">
@@ -135,14 +135,14 @@ export const StakeDashboard = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Stake DOT Tokens</DialogTitle>
+                <DialogTitle>Stake WND Tokens</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Amount to Stake</label>
                   <Input
                     type="number"
-                    placeholder="Enter DOT amount"
+                    placeholder="Enter WND amount"
                     value={stakeAmount}
                     onChange={(e) => setStakeAmount(e.target.value)}
                   />
@@ -164,14 +164,14 @@ export const StakeDashboard = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Withdraw DOT Tokens</DialogTitle>
+                <DialogTitle>Withdraw WND Tokens</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Amount to Withdraw</label>
                   <Input
                     type="number"
-                    placeholder="Enter DOT amount"
+                    placeholder="Enter WND amount"
                     value={withdrawAmount}
                     onChange={(e) => setWithdrawAmount(e.target.value)}
                   />

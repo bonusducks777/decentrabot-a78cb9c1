@@ -13,16 +13,25 @@ import { ChatSystem } from "@/components/ChatSystem";
 import { StakingLeaderboard } from "@/components/StakingLeaderboard";
 import { RobotLocationMap } from "@/components/RobotLocationMap";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 const AppPage = () => {
   const { isConnected } = useAccount();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedRobot, setSelectedRobot] = useState(searchParams.get("robot") || "robot-1");
+  const [robotData, setRobotData] = useState(null);
+  const blockchainUtils = useBlockchainUtils();
   
   useEffect(() => {
-    if (selectedRobot) {
-      setSearchParams({ robot: selectedRobot });
+    // Update URL when robot changes
+    if (searchParams.get("robot") !== selectedRobot) {
+      setSelectedRobot(searchParams.get("robot") || "robot-1");
     }
+  }, [searchParams, selectedRobot]);
+  
+  useEffect(() => {
+    // When selectedRobot changes, update the URL
+    setSearchParams({ robot: selectedRobot });
   }, [selectedRobot, setSearchParams]);
   
   const robots = [
@@ -39,9 +48,9 @@ const AppPage = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1 py-2 container px-4 animate-fade-in">
+      <main className="flex-1 py-6 container px-4 animate-fade-in">
         {isConnected ? (
-          <div className="grid grid-cols-12 gap-2">
+          <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
               <RobotCameraFeed 
                 robotId={selectedRobot}
@@ -51,7 +60,7 @@ const AppPage = () => {
               />
               <ControlPanel />
             </div>
-            <div className="col-span-12 lg:col-span-4 space-y-2">
+            <div className="col-span-12 lg:col-span-4 space-y-4">
               <ChatSystem />
               <StakeDashboard />
             </div>

@@ -1,34 +1,56 @@
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { useAccount } from "wagmi";
 import { Trophy, Clock } from "lucide-react";
-
-interface LeaderboardEntry {
-  position: number;
-  address: string;
-  stake: number;
-  isCurrentUser: boolean;
-}
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 export const StakingLeaderboard = () => {
   const { address } = useAccount();
-  const shortAddress = address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : '';
+  const blockchainUtils = useBlockchainUtils();
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 });
+  const [loading, setLoading] = useState(true);
   
-  // Placeholder data for the leaderboard
-  const leaderboardData: LeaderboardEntry[] = [
-    { position: 1, address: "0xd8da...6273", stake: 125.5, isCurrentUser: false },
-    { position: 2, address: shortAddress || "0xab12...9f3d", stake: 85.0, isCurrentUser: !!address },
-    { position: 3, address: "0x742a...e851", stake: 65.2, isCurrentUser: false },
-    { position: 4, address: "0x983f...4c21", stake: 42.8, isCurrentUser: false },
-    { position: 5, address: "0xf012...a734", stake: 30.1, isCurrentUser: false },
-  ];
-  
-  // Calculate time remaining for current session (placeholder)
-  const timeRemaining = {
-    hours: 2,
-    minutes: 45
-  };
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        const data = await blockchainUtils.getLeaderboard();
+        
+        // Convert leaderboard data to the format we need
+        const formattedData = data.map((entry, index) => ({
+          position: index + 1,
+          address: entry.address,
+          stake: parseFloat(entry.stake),
+          isCurrentUser: address && entry.address.toLowerCase().includes(address.slice(2, 6).toLowerCase()),
+          timeRemaining: entry.timeRemaining
+        }));
+        
+        setLeaderboardData(formattedData);
+        
+        // Set time remaining for current session
+        if (formattedData.length > 0) {
+          const topTime = formattedData[0].timeRemaining.split('h ');
+          setTimeRemaining({
+            hours: parseInt(topTime[0]),
+            minutes: parseInt(topTime[1].replace('m', ''))
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchLeaderboard();
+    
+    // Refresh leaderboard every 30 seconds
+    const interval = setInterval(fetchLeaderboard, 30000);
+    return () => clearInterval(interval);
+  }, [blockchainUtils, address]);
   
   return (
     <Card className="neo-card p-4">
@@ -44,7 +66,7 @@ export const StakingLeaderboard = () => {
           <TableRow>
             <TableHead>Rank</TableHead>
             <TableHead>Address</TableHead>
-            <TableHead className="text-right">Stake (DOT)</TableHead>
+            <TableHead className="text-right">Stake (WND)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

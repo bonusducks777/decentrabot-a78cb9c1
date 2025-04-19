@@ -1,21 +1,53 @@
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Battery, Activity, Clock } from "lucide-react";
+import { useBlockchainUtils } from "@/lib/blockchainUtils";
+import { useSearchParams } from "react-router-dom";
 
-interface RobotStatusProps {
-  batteryLevel?: number;
-  connectionStatus?: 'online' | 'offline';
-  lastActive?: string;
-  chargeRate?: number;
-}
-
-export const RobotStatus = ({ 
-  batteryLevel = 85, 
-  connectionStatus = 'offline',
-  lastActive = '2 minutes ago',
-  chargeRate = 2.5 // DOT per hour
-}: RobotStatusProps) => {
+export const RobotStatus = () => {
+  const [searchParams] = useSearchParams();
+  const robotId = searchParams.get("robot") || "robot-1";
+  const [batteryLevel, setBatteryLevel] = useState(85);
+  const [connectionStatus, setConnectionStatus] = useState('online');
+  const [lastActive, setLastActive] = useState('Just now');
+  const [chargeRate, setChargeRate] = useState(2.5);
+  const [uptime, setUptime] = useState("0h 0m");
+  
+  const { getRobotBatteryLevel, getRobotUptime, getBotFee } = useBlockchainUtils();
+  
+  useEffect(() => {
+    const fetchRobotStatus = async () => {
+      try {
+        // Get battery level
+        const battery = await getRobotBatteryLevel(robotId);
+        setBatteryLevel(battery);
+        
+        // Get robot uptime
+        const uptimeData = await getRobotUptime(robotId);
+        setUptime(uptimeData);
+        
+        // Get charge rate
+        const fee = await getBotFee();
+        setChargeRate(parseFloat(fee));
+        
+        // Update last active status
+        setLastActive('Just now');
+        
+        // Set connection status based on battery level (just a mock logic)
+        setConnectionStatus(battery > 20 ? 'online' : 'offline');
+      } catch (error) {
+        console.error("Error fetching robot status:", error);
+      }
+    };
+    
+    fetchRobotStatus();
+    const interval = setInterval(fetchRobotStatus, 10000); // Update every 10 seconds
+    
+    return () => clearInterval(interval);
+  }, [robotId, getRobotBatteryLevel, getRobotUptime, getBotFee]);
+  
   return (
     <Card className="neo-card p-3 mb-4">
       <div className="flex justify-between items-center mb-3">
@@ -50,7 +82,15 @@ export const RobotStatus = ({
             <Activity className="text-muted-foreground h-4 w-4" />
             Charge Rate
           </span>
-          <span className="text-sm text-orange-400">{chargeRate} DOT/hr</span>
+          <span className="text-sm text-orange-400">{chargeRate} WND/hr</span>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Clock className="text-muted-foreground h-4 w-4" />
+            Uptime
+          </span>
+          <span className="text-sm">{uptime}</span>
         </div>
         
         <div className="flex justify-between items-center">

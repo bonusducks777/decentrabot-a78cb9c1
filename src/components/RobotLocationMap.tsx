@@ -3,17 +3,20 @@ import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Map, Pin } from "lucide-react";
 import { useBlockchainUtils } from "@/lib/blockchainUtils";
+import { useSearchParams } from "react-router-dom";
 
 export const RobotLocationMap = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [location, setLocation] = useState({ lat: 40.7128, lng: -74.0060 });
+  const [searchParams] = useSearchParams();
+  const robotId = searchParams.get("robot") || "robot-1";
   const { getRobotLocation } = useBlockchainUtils();
   
   // Fetch robot location
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const robotLocation = await getRobotLocation("robot-1");
+        const robotLocation = await getRobotLocation(robotId);
         setLocation(robotLocation);
       } catch (error) {
         console.error("Failed to fetch robot location:", error);
@@ -24,7 +27,7 @@ export const RobotLocationMap = () => {
     const interval = setInterval(fetchLocation, 30000); // Update every 30 seconds
     
     return () => clearInterval(interval);
-  }, [getRobotLocation]);
+  }, [getRobotLocation, robotId]);
   
   // Initialize and update map
   useEffect(() => {

@@ -8,19 +8,19 @@ import { useBlockchainUtils } from "@/lib/blockchainUtils";
 
 export const ControlPanel = () => {
   const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient();
   const [isCurrentController, setIsCurrentController] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lastCommand, setLastCommand] = useState("");
+  const [selectedRobotId, setSelectedRobotId] = useState("robot-1");
 
-  const { isController } = useBlockchainUtils();
+  const blockchainUtils = useBlockchainUtils();
 
   useEffect(() => {
     const checkControllerStatus = async () => {
       if (isConnected && address) {
         try {
-          const controller = await isController(publicClient, address);
+          const controller = await blockchainUtils.isController();
           setIsCurrentController(controller);
         } catch (error) {
           console.error("Error checking controller status:", error);
@@ -32,7 +32,7 @@ export const ControlPanel = () => {
     };
 
     checkControllerStatus();
-  }, [isConnected, address, publicClient, isController]);
+  }, [isConnected, address, blockchainUtils]);
 
   const handleVerifyControl = async () => {
     setLoading(true);
@@ -50,16 +50,27 @@ export const ControlPanel = () => {
     }
   };
 
-  const handleRobotCommand = (command: string) => {
+  const handleRobotCommand = async (command) => {
     if (!isVerified) {
       toast.error("You need to verify control first");
       return;
     }
     
-    // This would send the command to the robot in a real application
-    toast.success(`Command sent: ${command}`);
-    console.log(`Robot command: ${command}`);
-    setLastCommand(command);
+    setLoading(true);
+    try {
+      const success = await blockchainUtils.sendRobotCommand(selectedRobotId, command);
+      if (success) {
+        toast.success(`Command sent: ${command}`);
+        setLastCommand(command);
+      } else {
+        toast.error("Failed to send command");
+      }
+    } catch (error) {
+      console.error(`Error sending command:`, error);
+      toast.error("Error sending command");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,28 +95,28 @@ export const ControlPanel = () => {
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("up")}
-              disabled={!isVerified || !isCurrentController}
+              disabled={!isVerified || !isCurrentController || loading}
             >
               ↑
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("left")}
-              disabled={!isVerified || !isCurrentController}
+              disabled={!isVerified || !isCurrentController || loading}
             >
               ←
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("down")}
-              disabled={!isVerified || !isCurrentController}
+              disabled={!isVerified || !isCurrentController || loading}
             >
               ↓
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("right")}
-              disabled={!isVerified || !isCurrentController}
+              disabled={!isVerified || !isCurrentController || loading}
             >
               →
             </Button>

@@ -12,7 +12,7 @@ export const HeroSection = () => {
               Power the Future. Control the Bot.
             </h1>
             <p className="mx-auto max-w-[700px] text-gray-400 md:text-xl">
-              Stake DOT. Outbid. Take command of real-world robotics.
+              Stake WND. Outbid. Take command of real-world robotics.
             </p>
           </div>
           <div className="w-full max-w-sm hover-scale">

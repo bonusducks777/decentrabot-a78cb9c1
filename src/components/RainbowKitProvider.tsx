@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { RainbowKitProvider as RKProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
-import { http, createConfig, WagmiProvider } from "wagmi";
-import { moonbeam } from "wagmi/chains";
+import { http, createConfig, WagmiProvider, defineChain } from "wagmi";
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "@/components/ThemeProvider";
@@ -15,8 +14,34 @@ interface RainbowKitWrapperProps {
 // WalletConnect Project ID
 const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
 
-// Chain configuration with moonbeam for Polkadot ecosystem
-const chains = [moonbeam] as const;
+// Define the Westend testnet
+const westend = defineChain({
+  id: 42262,
+  name: 'Westend',
+  nativeCurrency: {
+    name: 'Westend',
+    symbol: 'WND',
+    decimals: 12,
+  },
+  rpcUrls: {
+    default: {
+      http: ['wss://westend-rpc.dwellir.com'],
+    },
+    public: {
+      http: ['wss://westend-rpc.dwellir.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Westend Subscan',
+      url: 'https://westend.subscan.io',
+    },
+  },
+  testnet: true,
+});
+
+// Chain configuration with Westend for Polkadot ecosystem
+const chains = [westend] as const;
 
 // Get wallets using the proper API for RainbowKit v2
 const { connectors } = getDefaultWallets({
@@ -28,7 +53,7 @@ const { connectors } = getDefaultWallets({
 const config = createConfig({
   chains,
   transports: {
-    [moonbeam.id]: http(),
+    [westend.id]: http(),
   },
   connectors,
 });
