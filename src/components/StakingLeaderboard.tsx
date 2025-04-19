@@ -12,21 +12,20 @@ export const StakingLeaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 });
   const [loading, setLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
   
-  // Use a mount check to prevent fetching on first render
+  // Use a ref to track if the component is mounted
+  // Using a ref instead of state to avoid re-renders
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  useEffect(() => {
-    // Only run this effect if the component is mounted
-    if (!isMounted) return;
+    let mounted = true;
     
     const fetchLeaderboard = async () => {
+      if (!mounted) return;
+      
       try {
         setLoading(true);
         const data = await blockchainUtils.getLeaderboard();
+        
+        if (!mounted) return;
         
         // Convert leaderboard data to the format we need
         const formattedData = data.map((entry, index) => ({
@@ -50,7 +49,9 @@ export const StakingLeaderboard = () => {
       } catch (error) {
         console.error("Error fetching leaderboard:", error);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
     
@@ -59,8 +60,13 @@ export const StakingLeaderboard = () => {
     
     // Refresh leaderboard every 30 seconds
     const interval = setInterval(fetchLeaderboard, 30000);
-    return () => clearInterval(interval);
-  }, [blockchainUtils, address, isMounted]); // Add isMounted to dependencies
+    
+    // Cleanup function
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [blockchainUtils, address]); // Remove isMounted from dependencies
   
   return (
     <Card className="neo-card p-4">
