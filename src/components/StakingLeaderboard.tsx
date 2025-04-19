@@ -1,73 +1,75 @@
+"use client"
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { useAccount } from "wagmi";
-import { Trophy, Clock } from "lucide-react";
-import { useBlockchainUtils } from "@/lib/blockchainUtils";
+import { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
+import { useAccount } from "wagmi"
+import { Trophy, Clock } from "lucide-react"
+import { useBlockchainUtils } from "@/lib/blockchainUtils"
 
 export const StakingLeaderboard = () => {
-  const { address } = useAccount();
-  const blockchainUtils = useBlockchainUtils();
-  const [leaderboardData, setLeaderboardData] = useState([]);
-  const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 });
-  const [loading, setLoading] = useState(true);
-  
+  const { address } = useAccount()
+  const blockchainUtils = useBlockchainUtils()
+  const [leaderboardData, setLeaderboardData] = useState([])
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 })
+  const [loading, setLoading] = useState(true)
+
   // Use a ref to track if the component is mounted
   // Using a ref instead of state to avoid re-renders
   useEffect(() => {
-    let mounted = true;
-    
+    let mounted = true
+    const blockchainUtilsRef = blockchainUtils // Create a stable reference
+
     const fetchLeaderboard = async () => {
-      if (!mounted) return;
-      
+      if (!mounted) return
+
       try {
-        setLoading(true);
-        const data = await blockchainUtils.getLeaderboard();
-        
-        if (!mounted) return;
-        
+        setLoading(true)
+        const data = await blockchainUtilsRef.getLeaderboard()
+
+        if (!mounted) return
+
         // Convert leaderboard data to the format we need
         const formattedData = data.map((entry, index) => ({
           position: index + 1,
           address: entry.address,
-          stake: parseFloat(entry.stake),
+          stake: Number.parseFloat(entry.stake),
           isCurrentUser: address && entry.address.toLowerCase().includes(address.slice(2, 6).toLowerCase()),
-          timeRemaining: entry.timeRemaining
-        }));
-        
-        setLeaderboardData(formattedData);
-        
+          timeRemaining: entry.timeRemaining,
+        }))
+
+        setLeaderboardData(formattedData)
+
         // Set time remaining for current session
         if (formattedData.length > 0) {
-          const topTime = formattedData[0].timeRemaining.split('h ');
+          const topTime = formattedData[0].timeRemaining.split("h ")
           setTimeRemaining({
-            hours: parseInt(topTime[0]),
-            minutes: parseInt(topTime[1].replace('m', ''))
-          });
+            hours: Number.parseInt(topTime[0]),
+            minutes: Number.parseInt(topTime[1].replace("m", "")),
+          })
         }
       } catch (error) {
-        console.error("Error fetching leaderboard:", error);
+        console.error("Error fetching leaderboard:", error)
       } finally {
         if (mounted) {
-          setLoading(false);
+          setLoading(false)
         }
       }
-    };
-    
+    }
+
     // Initial fetch
-    fetchLeaderboard();
-    
+    fetchLeaderboard()
+
     // Refresh leaderboard every 30 seconds
-    const interval = setInterval(fetchLeaderboard, 30000);
-    
+    const interval = setInterval(fetchLeaderboard, 30000)
+
     // Cleanup function
     return () => {
-      mounted = false;
-      clearInterval(interval);
-    };
-  }, [blockchainUtils, address]); // Remove isMounted from dependencies
-  
+      mounted = false
+      clearInterval(interval)
+    }
+  }, [address]) // Only depend on address
+
   return (
     <Card className="neo-card p-4">
       <div className="mb-2">
@@ -76,7 +78,7 @@ export const StakingLeaderboard = () => {
           Staking Leaderboard
         </h3>
       </div>
-      
+
       <div className="max-h-[200px] overflow-y-auto">
         <Table>
           <TableHeader>
@@ -104,7 +106,7 @@ export const StakingLeaderboard = () => {
           </TableBody>
         </Table>
       </div>
-      
+
       <div className="mt-2 p-2 bg-background/50 rounded-md border border-border flex items-center justify-between text-xs">
         <div className="flex items-center gap-1">
           <Clock className="h-3 w-3 text-orange-400" />
@@ -115,5 +117,5 @@ export const StakingLeaderboard = () => {
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}
