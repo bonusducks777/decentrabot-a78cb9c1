@@ -15,8 +15,8 @@ export const HeroSection = () => {
               Stake WND. Outbid. Take command of real-world robotics.
             </p>
           </div>
-          <div className="flex justify-center w-full mt-6 relative z-20">
-            <div className="hover-scale">
+          <div className="flex justify-center w-full mt-6 relative z-50">
+            <div className="hover-scale relative z-50">
               <ConnectButton showBalance={false} chainStatus="icon" />
             </div>
           </div>

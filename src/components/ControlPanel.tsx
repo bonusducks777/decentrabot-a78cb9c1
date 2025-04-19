@@ -22,9 +22,11 @@ export const ControlPanel = () => {
     const checkControllerStatus = async () => {
       if (isConnected && address) {
         try {
-          const controller = await blockchainUtils.isController();
+          // Use a placeholder value instead of making blockchain calls
           setIsCurrentController(false); // Hardcoded to false for now
-          if (controller) {
+          
+          // For demonstration purposes, show the dialog occasionally
+          if (Math.random() > 0.8) { // 20% chance to show dialog for testing
             setShowVerifyDialog(true);
           }
         } catch (error) {
@@ -37,11 +39,12 @@ export const ControlPanel = () => {
     };
 
     checkControllerStatus();
-  }, [isConnected, address, blockchainUtils]);
+  }, [isConnected, address]);
 
   const handleVerifyControl = async () => {
     setLoading(true);
     try {
+      // Use setTimeout as a placeholder for blockchain interaction
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsVerified(true);
       setShowVerifyDialog(false);
@@ -62,17 +65,15 @@ export const ControlPanel = () => {
     
     setLoading(true);
     try {
-      const success = await blockchainUtils.sendRobotCommand(selectedRobotId, command);
-      if (success) {
+      // Use a placeholder value instead of blockchain call
+      setTimeout(() => {
         toast.success(`Command sent: ${command}`);
         setLastCommand(command);
-      } else {
-        toast.error("Failed to send command");
-      }
+        setLoading(false);
+      }, 500);
     } catch (error) {
       console.error(`Error sending command:`, error);
       toast.error("Error sending command");
-    } finally {
       setLoading(false);
     }
   };

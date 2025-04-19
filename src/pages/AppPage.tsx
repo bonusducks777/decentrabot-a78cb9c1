@@ -19,7 +19,6 @@ const AppPage = () => {
   const { isConnected } = useAccount();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedRobot, setSelectedRobot] = useState(searchParams.get("robot") || "robot-1");
-  const [robotData, setRobotData] = useState(null);
   const blockchainUtils = useBlockchainUtils();
   
   useEffect(() => {
@@ -65,7 +64,10 @@ const AppPage = () => {
             
             {/* Right Column */}
             <div className="col-span-12 lg:col-span-4 space-y-2">
-              <ChatSystem />
+              {/* Make ChatSystem taller */}
+              <div className="h-[400px]">
+                <ChatSystem />
+              </div>
               <StakeDashboard />
               <StakingLeaderboard />
               <RobotStatus />
@@ -82,7 +84,9 @@ const AppPage = () => {
             <p className="text-center max-w-md mb-6">
               Please connect your wallet to view the robot feed and control panel.
             </p>
-            <ConnectButton />
+            <div className="z-50 relative">
+              <ConnectButton />
+            </div>
           </div>
         )}
       </main>

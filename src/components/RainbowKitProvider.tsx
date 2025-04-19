@@ -47,6 +47,7 @@ const chains = [westendAssetHub] as const;
 const { connectors } = getDefaultWallets({
   appName: "Decentrabot",
   projectId,
+  chains, // This ensures RainbowKit knows it should add this chain to Metamask
 });
 
 // Create wagmi config
@@ -83,7 +84,7 @@ export const RainbowKitProvider: React.FC<RainbowKitWrapperProps> = ({ children 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RKProvider theme={theme === "dark" ? darkTheme() : lightTheme()}>
+        <RKProvider theme={theme === "dark" ? darkTheme() : lightTheme()} chains={chains}>
           {children}
         </RKProvider>
       </QueryClientProvider>

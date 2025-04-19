@@ -9,33 +9,13 @@ import { useSearchParams } from "react-router-dom";
 export const RobotStatus = () => {
   const [searchParams] = useSearchParams();
   const robotId = searchParams.get("robot") || "robot-1";
-  const [batteryLevel] = useState(85); // Fixed battery level
-  const [connectionStatus, setConnectionStatus] = useState('online');
-  const [lastActive, setLastActive] = useState('Just now');
-  const [chargeRate, setChargeRate] = useState(2.5);
-  const [uptime] = useState("3h 45m"); // Fixed uptime
   
-  const { getBotFee } = useBlockchainUtils();
-  
-  useEffect(() => {
-    const fetchRobotStatus = async () => {
-      try {
-        // Get charge rate
-        const fee = await getBotFee();
-        setChargeRate(parseFloat(fee));
-        
-        // Update last active status
-        setLastActive('Just now');
-        
-        // Set connection status based on battery level (just a mock logic)
-        setConnectionStatus('online');
-      } catch (error) {
-        console.error("Error fetching robot status:", error);
-      }
-    };
-    
-    fetchRobotStatus();
-  }, [robotId, getBotFee]);
+  // Fixed values to prevent random updates
+  const batteryLevel = 85; 
+  const connectionStatus = 'online';
+  const lastActive = 'Just now';
+  const chargeRate = 2.5;
+  const uptime = "3h 45m"; 
   
   return (
     <Card className="neo-card p-3">
@@ -58,7 +38,7 @@ export const RobotStatus = () => {
           <div className="flex items-center gap-2">
             <div className="h-2 w-24 bg-gray-200 rounded-full">
               <div 
-                className="h-full bg-orange-500 rounded-full transition-all duration-1000"
+                className="h-full bg-orange-500 rounded-full"
                 style={{ width: `${batteryLevel}%` }}
               />
             </div>

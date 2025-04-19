@@ -2,10 +2,7 @@
 "use client"
 
 import { useAccount, usePublicClient, useWalletClient } from "wagmi"
-import { parseEther, formatEther } from "viem"
 import { useState, useEffect } from "react"
-import { readContract, writeContract, sendTransaction } from "@wagmi/core"
-import { config } from "@/components/RainbowKitProvider"
 
 type LeaderboardEntry = {
   address: string;
@@ -13,28 +10,7 @@ type LeaderboardEntry = {
   timeRemaining: string;
 }
 
-// Contract ABI - This would be generated from your Solidity contract
-// This is a simplified version for demonstration
-const CONTRACT_ABI = [
-  // Read functions
-  "function getStakedBalance(address user) view returns (uint256)",
-  "function getHighestStaker() view returns (address)",
-  "function isController(address user) view returns (bool)",
-  "function getBotFee() view returns (uint256)",
-  "function getRobotLocation(string robotId) view returns (int256 lat, int256 lng)",
-  "function getRobotBatteryLevel(string robotId) view returns (uint256)",
-  "function getRobotUptime(string robotId) view returns (uint256)",
-  "function getTimeRemaining(address user) view returns (uint256)",
-  "function getStakingLeaderboard(uint256 count) view returns (address[] addresses, uint256[] amounts)",
-  "function getAllRobotIds() view returns (string[] memory)",
-
-  // Write functions
-  "function stakeTokens() payable",
-  "function withdrawTokens(uint256 amount)",
-  "function sendCommand(string robotId, string command)",
-] as const;
-
-// Contract address - Replace with your deployed contract address
+// Mock Contract address - This is a placeholder
 export const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 export const useBlockchainUtils = () => {
@@ -55,7 +31,6 @@ export const useBlockchainUtils = () => {
   // Fetch robot IDs from the contract
   const fetchRobotIds = async () => {
     try {
-      // Replace with real contract interaction
       // This is a placeholder function
       console.log("Fetching robot IDs...")
       
@@ -77,8 +52,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      // Placeholder for staking function
-      console.log(`Staking ${amount} WND tokens`)
+      // Placeholder for staking function - just log and return success
+      console.log(`PLACEHOLDER: Staking ${amount} WND tokens`)
       return true
     } catch (error) {
       console.error("Error staking tokens:", error)
@@ -93,8 +68,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      // Placeholder for withdraw function
-      console.log(`Withdrawing ${amount} WND tokens`)
+      // Placeholder for withdraw function - just log and return success
+      console.log(`PLACEHOLDER: Withdrawing ${amount} WND tokens`)
       return true
     } catch (error) {
       console.error("Error withdrawing tokens:", error)
@@ -139,7 +114,7 @@ export const useBlockchainUtils = () => {
 
     try {
       // Placeholder function - mock controller status
-      return true
+      return Math.random() > 0.8 // 20% chance to be controller for testing
     } catch (error) {
       console.error("Error checking controller status:", error)
       return false
@@ -206,12 +181,12 @@ export const useBlockchainUtils = () => {
   }
 
   const getRobotBatteryLevel = async (robotId: string) => {
-    // Always return a fixed value to prevent random updates
+    // Fixed value to prevent random updates
     return 85; // Fixed 85% battery
   }
 
   const getRobotUptime = async (robotId: string) => {
-    // Always return a fixed value to prevent random updates
+    // Fixed value to prevent random updates
     return "3h 45m";
   }
 
@@ -223,7 +198,7 @@ export const useBlockchainUtils = () => {
 
     try {
       // Placeholder function - log command and return success
-      console.log(`Command sent to ${robotId}: ${command}`)
+      console.log(`PLACEHOLDER: Command sent to ${robotId}: ${command}`)
       return true
     } catch (error) {
       console.error(`Error sending command to ${robotId}:`, error)
