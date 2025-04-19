@@ -1,18 +1,6 @@
 
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { moonbeam } from 'wagmi/chains';
-import { http } from 'wagmi';
+// This file is kept for backward compatibility
+// The actual configuration has been moved to RainbowKitProvider.tsx
+import { config } from "@/components/RainbowKitProvider";
 
-// Use a project ID from WalletConnect - this is a placeholder
-const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
-
-const web3Config = getDefaultConfig({
-  appName: 'Decentrabot',
-  projectId,
-  chains: [moonbeam], // Focus only on Moonbeam for Polkadot ecosystem
-  transports: {
-    [moonbeam.id]: http(),
-  },
-});
-
-export { web3Config as config };
+export { config };
