@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { RainbowKitProvider as RKProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
-import { http, createConfig, WagmiProvider, Chain } from "wagmi";
+import { http, createConfig, WagmiProvider } from "wagmi";
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "@/components/ThemeProvider";
@@ -37,7 +38,7 @@ const westend = {
     },
   },
   testnet: true,
-} as const satisfies Chain;
+} as const;
 
 // Chain configuration with Westend for Polkadot ecosystem
 const chains = [westend] as const;

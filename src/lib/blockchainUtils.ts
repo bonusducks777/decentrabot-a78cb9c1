@@ -1,9 +1,11 @@
+
 "use client"
 
 import { useAccount, usePublicClient, useWalletClient } from "wagmi"
 import { parseEther, formatEther } from "viem"
 import { useState, useEffect } from "react"
 import { readContract, writeContract, sendTransaction } from "@wagmi/core"
+import { config } from "@/components/RainbowKitProvider"
 
 type LeaderboardEntry = {
   address: string;
@@ -30,7 +32,7 @@ const CONTRACT_ABI = [
   "function stakeTokens() payable",
   "function withdrawTokens(uint256 amount)",
   "function sendCommand(string robotId, string command)",
-]
+] as const;
 
 // Contract address - Replace with your deployed contract address
 export const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
@@ -53,11 +55,11 @@ export const useBlockchainUtils = () => {
   // Fetch robot IDs from the contract
   const fetchRobotIds = async () => {
     try {
-      const robotIds = await readContract({
+      const robotIds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getAllRobotIds",
-      })
+      }) as string[]
 
       setCachedRobotIds(robotIds)
     } catch (error) {
@@ -79,7 +81,7 @@ export const useBlockchainUtils = () => {
       const amountInWei = parseEther(amount)
 
       // Send native tokens to the contract
-      const tx = await sendTransaction({
+      const tx = await sendTransaction(config, {
         to: CONTRACT_ADDRESS,
         value: amountInWei,
         data: "0x", // Call the receive function
@@ -93,7 +95,7 @@ export const useBlockchainUtils = () => {
     }
   }
 
-  const withdrawTokens = async (amount) => {
+  const withdrawTokens = async (amount: string) => {
     if (!isConnected || !walletClient) {
       console.error("Wallet not connected")
       return false
@@ -102,7 +104,7 @@ export const useBlockchainUtils = () => {
     try {
       const amountInWei = parseEther(amount)
 
-      const tx = await writeContract({
+      const tx = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "withdrawTokens",
@@ -125,12 +127,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const balance = await readContract({
+      const balance = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakedBalance",
         args: [address],
-      })
+      }) as bigint
 
       return formatEther(balance)
     } catch (error) {
@@ -145,7 +147,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const highestStaker = await readContract({
+      const highestStaker = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getHighestStaker",
@@ -164,12 +166,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const controller = await readContract({
+      const controller = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "isController",
         args: [address],
-      })
+      }) as boolean
 
       return controller
     } catch (error) {
@@ -184,11 +186,11 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const fee = await readContract({
+      const fee = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getBotFee",
-      })
+      }) as bigint
 
       // Convert from wei (1e18) to WND
       return formatEther(fee)
@@ -198,7 +200,7 @@ export const useBlockchainUtils = () => {
     }
   }
 
-  const getRobotLocation = async (robotId) => {
+  const getRobotLocation = async (robotId: string) => {
     if (!publicClient) {
       // Fallback to default locations
       switch (robotId) {
@@ -220,12 +222,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const location = await readContract({
+      const location = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotLocation",
         args: [robotId],
-      })
+      }) as [bigint, bigint]
 
       return {
         lat: Number(location[0]) / 1e6, // Convert from int256 to decimal degrees
@@ -253,18 +255,18 @@ export const useBlockchainUtils = () => {
     }
   }
 
-  const getRobotBatteryLevel = async (robotId) => {
+  const getRobotBatteryLevel = async (robotId: string) => {
     if (!publicClient) {
       return Math.floor(Math.random() * 40) + 60 // Random between 60-100
     }
 
     try {
-      const batteryLevel = await readContract({
+      const batteryLevel = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotBatteryLevel",
         args: [robotId],
-      })
+      }) as bigint
 
       return Number(batteryLevel)
     } catch (error) {
@@ -273,7 +275,7 @@ export const useBlockchainUtils = () => {
     }
   }
 
-  const getRobotUptime = async (robotId) => {
+  const getRobotUptime = async (robotId: string) => {
     if (!publicClient) {
       const hours = Math.floor(Math.random() * 6)
       const minutes = Math.floor(Math.random() * 60)
@@ -281,12 +283,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const uptimeSeconds = await readContract({
+      const uptimeSeconds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getRobotUptime",
         args: [robotId],
-      })
+      }) as bigint
 
       // Convert seconds to hours and minutes
       const hours = Math.floor(Number(uptimeSeconds) / 3600)
@@ -301,14 +303,14 @@ export const useBlockchainUtils = () => {
     }
   }
 
-  const sendRobotCommand = async (robotId, command) => {
+  const sendRobotCommand = async (robotId: string, command: string) => {
     if (!isConnected || !walletClient) {
       console.error("Wallet not connected")
       return false
     }
 
     try {
-      const tx = await writeContract({
+      const tx = await writeContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "sendCommand",
@@ -326,18 +328,18 @@ export const useBlockchainUtils = () => {
 
   // ========== CONTRACT UTILITIES ==========
 
-  const getTimeRemaining = async (userAddress) => {
+  const getTimeRemaining = async (userAddress: string) => {
     if (!publicClient) {
       return "1h 32m"
     }
 
     try {
-      const timeRemainingSeconds = await readContract({
+      const timeRemainingSeconds = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getTimeRemaining",
         args: [userAddress],
-      })
+      }) as bigint
 
       // Convert seconds to hours and minutes
       const hours = Math.floor(Number(timeRemainingSeconds) / 3600)
@@ -362,12 +364,12 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const result = await readContract({
+      const result = await readContract(config, {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getStakingLeaderboard",
         args: [5], // Get top 5 stakers
-      })
+      }) as [string[], bigint[]]
 
       const addresses = result[0]
       const amounts = result[1]
