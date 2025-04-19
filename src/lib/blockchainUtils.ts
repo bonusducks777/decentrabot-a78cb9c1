@@ -59,8 +59,8 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getAllRobotIds",
-        // Add chain parameter
-        chain: config.chains[0],
+        // Use chainId instead of chain
+        chainId: config.chains[0].id,
       }) as string[]
 
       setCachedRobotIds(robotIds)
@@ -87,7 +87,7 @@ export const useBlockchainUtils = () => {
         to: CONTRACT_ADDRESS,
         value: amountInWei,
         data: "0x", // Call the receive function
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       })
 
       console.log("Staking transaction:", tx)
@@ -112,7 +112,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "withdrawTokens",
         args: [amountInWei],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
         account: address, // Add the account parameter
       })
 
@@ -137,7 +137,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getStakedBalance",
         args: [address],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as bigint
 
       return formatEther(balance)
@@ -157,7 +157,7 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getHighestStaker",
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       })
 
       return highestStaker
@@ -178,7 +178,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "isController",
         args: [address],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as boolean
 
       return controller
@@ -198,7 +198,7 @@ export const useBlockchainUtils = () => {
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: "getBotFee",
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as bigint
 
       // Convert from wei (1e18) to WND
@@ -236,7 +236,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotLocation",
         args: [robotId],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as [bigint, bigint]
 
       return {
@@ -276,7 +276,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotBatteryLevel",
         args: [robotId],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as bigint
 
       return Number(batteryLevel)
@@ -299,7 +299,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getRobotUptime",
         args: [robotId],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -327,7 +327,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "sendCommand",
         args: [robotId, command],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
         account: address, // Add the account parameter
       })
 
@@ -353,7 +353,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getTimeRemaining",
         args: [userAddress],
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as bigint
 
       // Convert seconds to hours and minutes
@@ -384,7 +384,7 @@ export const useBlockchainUtils = () => {
         abi: CONTRACT_ABI,
         functionName: "getStakingLeaderboard",
         args: [5], // Get top 5 stakers
-        chain: config.chains[0], // Add the chain parameter
+        chainId: config.chains[0].id, // Use chainId instead of chain
       }) as [string[], bigint[]]
 
       const addresses = result[0]
