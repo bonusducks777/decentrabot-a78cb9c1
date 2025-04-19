@@ -21,39 +21,41 @@ export const LiveLogFeed = () => {
   ];
 
   return (
-    <Card className="neo-card transition-all duration-300">
+    <Card className={`neo-card transition-all duration-300 ${isExpanded ? "mb-6" : ""}`}>
       <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center">
           <h3 className="text-xl font-bold">Live Activity Log</h3>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-orange-400 hover:text-orange-500"
+            className="text-orange-400 hover:text-orange-500 hover:bg-orange-500/10"
           >
             {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
               <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
             )}
           </Button>
         </div>
         
         {isExpanded && (
-          <ScrollArea className="h-[200px] rounded-md border">
-            <div className="p-2">
-              {logs.map((log, index) => (
-                <div 
-                  key={index} 
-                  className={`py-2 px-3 ${index % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
-                    rounded-md mb-1 flex justify-between ${index === 0 ? 'border-l-2 border-orange-400' : ''}`}
-                >
-                  <span className="text-sm font-mono">{log.time}</span>
-                  <span className="text-sm">{log.action}</span>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+          <div className="mt-3">
+            <ScrollArea className="h-[200px] rounded-md border">
+              <div className="p-2">
+                {logs.map((log, index) => (
+                  <div 
+                    key={index} 
+                    className={`py-2 px-3 ${index % 2 === 0 ? 'bg-background/60' : 'bg-background/30'} 
+                      rounded-md mb-1 flex justify-between ${index === 0 ? 'border-l-2 border-orange-400' : ''}`}
+                  >
+                    <span className="text-sm font-mono">{log.time}</span>
+                    <span className="text-sm">{log.action}</span>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
         )}
       </div>
     </Card>

@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
@@ -6,12 +7,14 @@ import { Activity, Users, Clock } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RobotCameraFeedProps {
+  robotId?: string;
   robotName?: string;
   viewerCount?: number;
   chargeRate?: number;
 }
 
 export const RobotCameraFeed = ({ 
+  robotId,
   robotName = "Warehouse Bot Alpha", 
   viewerCount = 5,
   chargeRate = 2.5

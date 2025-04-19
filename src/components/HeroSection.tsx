@@ -21,6 +21,7 @@ export const HeroSection = () => {
                 <Button 
                   onClick={openConnectModal} 
                   className="w-full neo-button"
+                  type="button"
                 >
                   Connect Wallet
                 </Button>

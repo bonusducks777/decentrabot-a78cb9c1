@@ -1,3 +1,4 @@
+
 import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -11,6 +12,8 @@ import { RobotStatus } from "@/components/RobotStatus";
 import { ChatSystem } from "@/components/ChatSystem";
 import { StakingLeaderboard } from "@/components/StakingLeaderboard";
 import { RobotLocationMap } from "@/components/RobotLocationMap";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AppPage = () => {
   const { isConnected } = useAccount();
@@ -24,13 +27,15 @@ const AppPage = () => {
   }, [selectedRobot, setSearchParams]);
   
   const robots = [
-    { id: "robot-1", name: "Warehouse Bot Alpha" },
-    { id: "robot-2", name: "Garden Maintenance Bot" },
-    { id: "robot-3", name: "Security Patrol Bot" },
-    { id: "robot-4", name: "Delivery Bot" },
-    { id: "robot-5", name: "Assembly Line Bot" },
-    { id: "robot-6", name: "Cleaning Bot" },
+    { id: "robot-1", name: "Warehouse Bot Alpha", chargeRate: 2.5 },
+    { id: "robot-2", name: "Garden Maintenance Bot", chargeRate: 1.8 },
+    { id: "robot-3", name: "Security Patrol Bot", chargeRate: 1.2 },
+    { id: "robot-4", name: "Delivery Bot", chargeRate: 1.5 },
+    { id: "robot-5", name: "Assembly Line Bot", chargeRate: 0.9 },
+    { id: "robot-6", name: "Cleaning Bot", chargeRate: 0.8 },
   ];
+
+  const selectedRobotData = robots.find(r => r.id === selectedRobot) || robots[0];
 
   const handleRobotChange = (value: string) => {
     setSelectedRobot(value);
@@ -43,10 +48,27 @@ const AppPage = () => {
         {isConnected ? (
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12 lg:col-span-8">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-2xl font-bold">
+                  <Select value={selectedRobot} onValueChange={handleRobotChange}>
+                    <SelectTrigger className="w-[220px] border-none bg-transparent px-0 font-bold focus:ring-0">
+                      <SelectValue placeholder="Select a robot" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {robots.map((robot) => (
+                        <SelectItem key={robot.id} value={robot.id}>
+                          {robot.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </h2>
+              </div>
               <RobotCameraFeed 
                 robotId={selectedRobot}
-                robotName={robots.find(r => r.id === selectedRobot)?.name} 
+                robotName={selectedRobotData.name} 
                 viewerCount={5}
+                chargeRate={selectedRobotData.chargeRate}
               />
               <ControlPanel />
             </div>
@@ -73,7 +95,7 @@ const AppPage = () => {
             <p className="text-center max-w-md mb-6">
               Please connect your wallet to view the robot feed and control panel.
             </p>
-            {/* <ConnectButton /> */}
+            <ConnectButton />
           </div>
         )}
       </main>
