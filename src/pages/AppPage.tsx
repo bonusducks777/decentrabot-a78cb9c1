@@ -51,7 +51,8 @@ const AppPage = () => {
       <main className="flex-1 py-4 container px-4 animate-fade-in">
         {isConnected ? (
           <div className="grid grid-cols-12 gap-2">
-            <div className="col-span-12 lg:col-span-8">
+            {/* Left Column */}
+            <div className="col-span-12 lg:col-span-8 space-y-2">
               <RobotCameraFeed 
                 robotId={selectedRobot}
                 robotName={selectedRobotData.name} 
@@ -59,18 +60,18 @@ const AppPage = () => {
                 chargeRate={selectedRobotData.chargeRate}
               />
               <ControlPanel />
-            </div>
-            <div className="col-span-12 lg:col-span-4 space-y-2">
-              <div className="grid grid-cols-1 gap-2">
-                <RobotStatus />
-                <StakingLeaderboard />
-                <ChatSystem />
-                <StakeDashboard />
-              </div>
-            </div>
-            <div className="col-span-12 lg:col-span-8 mt-2">
               <RobotLocationMap />
             </div>
+            
+            {/* Right Column */}
+            <div className="col-span-12 lg:col-span-4 space-y-2">
+              <ChatSystem />
+              <StakeDashboard />
+              <StakingLeaderboard />
+              <RobotStatus />
+            </div>
+            
+            {/* Full Width Bottom Panel */}
             <div className="col-span-12 mt-2">
               <LiveLogFeed />
             </div>

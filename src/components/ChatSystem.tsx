@@ -53,7 +53,7 @@ export const ChatSystem = () => {
   };
 
   return (
-    <Card className="neo-card flex flex-col h-[300px]">
+    <Card className="neo-card flex flex-col h-[600px]">
       <div className="p-2 flex flex-col h-full">
         <h3 className="text-lg font-bold mb-1 px-2">Community Chat</h3>
         <ScrollArea className="flex-1 rounded-md border mb-2">

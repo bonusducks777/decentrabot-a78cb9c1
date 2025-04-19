@@ -15,7 +15,7 @@ export const HeroSection = () => {
               Stake WND. Outbid. Take command of real-world robotics.
             </p>
           </div>
-          <div className="flex justify-center w-full mt-6 z-10 relative">
+          <div className="flex justify-center w-full mt-6 relative z-20">
             <div className="hover-scale">
               <ConnectButton showBalance={false} chainStatus="icon" />
             </div>
@@ -23,7 +23,7 @@ export const HeroSection = () => {
         </div>
       </div>
       
-      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60 soft-pulse"></div>
+      <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-2/3 h-96 bg-orange-500/20 blur-[100px] rounded-full opacity-60 soft-pulse z-10"></div>
     </div>
   );
 };

@@ -9,25 +9,17 @@ import { useSearchParams } from "react-router-dom";
 export const RobotStatus = () => {
   const [searchParams] = useSearchParams();
   const robotId = searchParams.get("robot") || "robot-1";
-  const [batteryLevel, setBatteryLevel] = useState(85);
+  const [batteryLevel] = useState(85); // Fixed battery level
   const [connectionStatus, setConnectionStatus] = useState('online');
   const [lastActive, setLastActive] = useState('Just now');
   const [chargeRate, setChargeRate] = useState(2.5);
-  const [uptime, setUptime] = useState("0h 0m");
+  const [uptime] = useState("3h 45m"); // Fixed uptime
   
-  const { getRobotBatteryLevel, getRobotUptime, getBotFee } = useBlockchainUtils();
+  const { getBotFee } = useBlockchainUtils();
   
   useEffect(() => {
     const fetchRobotStatus = async () => {
       try {
-        // Get battery level
-        const battery = await getRobotBatteryLevel(robotId);
-        setBatteryLevel(battery);
-        
-        // Get robot uptime
-        const uptimeData = await getRobotUptime(robotId);
-        setUptime(uptimeData);
-        
         // Get charge rate
         const fee = await getBotFee();
         setChargeRate(parseFloat(fee));
@@ -36,20 +28,17 @@ export const RobotStatus = () => {
         setLastActive('Just now');
         
         // Set connection status based on battery level (just a mock logic)
-        setConnectionStatus(battery > 20 ? 'online' : 'offline');
+        setConnectionStatus('online');
       } catch (error) {
         console.error("Error fetching robot status:", error);
       }
     };
     
     fetchRobotStatus();
-    const interval = setInterval(fetchRobotStatus, 10000); // Update every 10 seconds
-    
-    return () => clearInterval(interval);
-  }, [robotId, getRobotBatteryLevel, getRobotUptime, getBotFee]);
+  }, [robotId, getBotFee]);
   
   return (
-    <Card className="neo-card p-3 mb-4">
+    <Card className="neo-card p-3">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold">Robot Status</h3>
         <Badge 

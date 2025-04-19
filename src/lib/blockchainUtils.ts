@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useAccount, usePublicClient, useWalletClient } from "wagmi"
@@ -54,14 +55,12 @@ export const useBlockchainUtils = () => {
   // Fetch robot IDs from the contract
   const fetchRobotIds = async () => {
     try {
-      const robotIds = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getAllRobotIds",
-        chainId: config.chains[0].id,
-      }) as string[]
-
-      setCachedRobotIds(robotIds)
+      // Replace with real contract interaction
+      // This is a placeholder function
+      console.log("Fetching robot IDs...")
+      
+      // Simulating fetch with default IDs
+      setCachedRobotIds(["robot-1", "robot-2", "robot-3", "robot-4", "robot-5", "robot-6"])
     } catch (error) {
       console.error("Error fetching robot IDs:", error)
       // Fallback to default robot IDs
@@ -78,17 +77,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const amountInWei = parseEther(amount)
-
-      // Send native tokens to the contract
-      const tx = await sendTransaction(config, {
-        to: CONTRACT_ADDRESS,
-        value: amountInWei,
-        data: "0x", // Call the receive function
-        chainId: config.chains[0].id,
-      })
-
-      console.log("Staking transaction:", tx)
+      // Placeholder for staking function
+      console.log(`Staking ${amount} WND tokens`)
       return true
     } catch (error) {
       console.error("Error staking tokens:", error)
@@ -103,18 +93,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const amountInWei = parseEther(amount)
-
-      const tx = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "withdrawTokens",
-        args: [amountInWei],
-        chainId: config.chains[0].id,
-        account: address,
-      })
-
-      console.log("Withdrawal transaction:", tx)
+      // Placeholder for withdraw function
+      console.log(`Withdrawing ${amount} WND tokens`)
       return true
     } catch (error) {
       console.error("Error withdrawing tokens:", error)
@@ -130,15 +110,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const balance = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getStakedBalance",
-        args: [address],
-        chainId: config.chains[0].id,
-      }) as bigint
-
-      return formatEther(balance)
+      // Placeholder function - return mock balance
+      return "42.5"
     } catch (error) {
       console.error("Error getting user balance:", error)
       return "0.0"
@@ -151,14 +124,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const highestStaker = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getHighestStaker",
-        chainId: config.chains[0].id,
-      })
-
-      return highestStaker
+      // Placeholder function - return mock address
+      return "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
     } catch (error) {
       console.error("Error getting highest staker:", error)
       return "0x0000000000000000000000000000000000000000"
@@ -171,15 +138,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const controller = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "isController",
-        args: [address],
-        chainId: config.chains[0].id,
-      }) as boolean
-
-      return controller
+      // Placeholder function - mock controller status
+      return true
     } catch (error) {
       console.error("Error checking controller status:", error)
       return false
@@ -192,15 +152,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const fee = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getBotFee",
-        chainId: config.chains[0].id,
-      }) as bigint
-
-      // Convert from wei (1e18) to WND
-      return formatEther(fee)
+      // Placeholder function - return mock fee
+      return "2.5"
     } catch (error) {
       console.error("Error getting bot fee:", error)
       return "2.5"
@@ -229,21 +182,7 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const location = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getRobotLocation",
-        args: [robotId],
-        chainId: config.chains[0].id,
-      }) as [bigint, bigint]
-
-      return {
-        lat: Number(location[0]) / 1e6, // Convert from int256 to decimal degrees
-        lng: Number(location[1]) / 1e6,
-      }
-    } catch (error) {
-      console.error(`Error getting location for robot ${robotId}:`, error)
-      // Fallback to default locations
+      // Placeholder function - return mock location based on robotId
       switch (robotId) {
         case "robot-1":
           return { lat: 40.7128, lng: -74.006 } // New York
@@ -260,57 +199,20 @@ export const useBlockchainUtils = () => {
         default:
           return { lat: 0, lng: 0 }
       }
+    } catch (error) {
+      console.error(`Error getting location for robot ${robotId}:`, error)
+      return { lat: 40.7128, lng: -74.006 } // Default to New York
     }
   }
 
   const getRobotBatteryLevel = async (robotId: string) => {
-    if (!publicClient) {
-      return Math.floor(Math.random() * 40) + 60 // Random between 60-100
-    }
-
-    try {
-      const batteryLevel = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getRobotBatteryLevel",
-        args: [robotId],
-        chainId: config.chains[0].id,
-      }) as bigint
-
-      return Number(batteryLevel)
-    } catch (error) {
-      console.error(`Error getting battery level for robot ${robotId}:`, error)
-      return Math.floor(Math.random() * 40) + 60 // Random between 60-100
-    }
+    // Always return a fixed value to prevent random updates
+    return 85; // Fixed 85% battery
   }
 
   const getRobotUptime = async (robotId: string) => {
-    if (!publicClient) {
-      const hours = Math.floor(Math.random() * 6)
-      const minutes = Math.floor(Math.random() * 60)
-      return `${hours}h ${minutes}m`
-    }
-
-    try {
-      const uptimeSeconds = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getRobotUptime",
-        args: [robotId],
-        chainId: config.chains[0].id,
-      }) as bigint
-
-      // Convert seconds to hours and minutes
-      const hours = Math.floor(Number(uptimeSeconds) / 3600)
-      const minutes = Math.floor((Number(uptimeSeconds) % 3600) / 60)
-
-      return `${hours}h ${minutes}m`
-    } catch (error) {
-      console.error(`Error getting uptime for robot ${robotId}:`, error)
-      const hours = Math.floor(Math.random() * 6)
-      const minutes = Math.floor(Math.random() * 60)
-      return `${hours}h ${minutes}m`
-    }
+    // Always return a fixed value to prevent random updates
+    return "3h 45m";
   }
 
   const sendRobotCommand = async (robotId: string, command: string) => {
@@ -320,17 +222,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const tx = await writeContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "sendCommand",
-        args: [robotId, command],
-        chainId: config.chains[0].id,
-        account: address,
-      })
-
-      console.log(`Command sent to ${robotId}:`, command)
-      console.log("Transaction:", tx)
+      // Placeholder function - log command and return success
+      console.log(`Command sent to ${robotId}: ${command}`)
       return true
     } catch (error) {
       console.error(`Error sending command to ${robotId}:`, error)
@@ -346,19 +239,8 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const timeRemainingSeconds = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getTimeRemaining",
-        args: [userAddress],
-        chainId: config.chains[0].id,
-      }) as bigint
-
-      // Convert seconds to hours and minutes
-      const hours = Math.floor(Number(timeRemainingSeconds) / 3600)
-      const minutes = Math.floor((Number(timeRemainingSeconds) % 3600) / 60)
-
-      return `${hours}h ${minutes}m`
+      // Placeholder function - return mock time remaining
+      return "1h 32m"
     } catch (error) {
       console.error(`Error getting time remaining for ${userAddress}:`, error)
       return "1h 32m"
@@ -377,36 +259,17 @@ export const useBlockchainUtils = () => {
     }
 
     try {
-      const result = await readContract(config, {
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: "getStakingLeaderboard",
-        args: [5], // Get top 5 stakers
-        chainId: config.chains[0].id,
-      }) as [string[], bigint[]]
-
-      const addresses = result[0]
-      const amounts = result[1]
-
-      // Process the leaderboard data
-      const leaderboard = await Promise.all(
-        addresses.map(async (addr, index) => {
-          const timeRemaining = await getTimeRemaining(addr)
-          const stake = formatEther(amounts[index])
-
-          // Format address for display
-          const displayAddress = `${addr.slice(0, 6)}...${addr.slice(-4)}`
-
-          return {
-            address: displayAddress,
-            stake: stake,
-            timeRemaining: timeRemaining,
-          }
-        }),
-      )
-
-      setCachedLeaderboard(leaderboard)
-      return leaderboard
+      // Placeholder function - return mock leaderboard
+      const leaderboard = [
+        { address: "0xd8da...6273", stake: "125.5", timeRemaining: "1h 32m" },
+        { address: "0xab12...9f3d", stake: "85.0", timeRemaining: "4h 15m" },
+        { address: "0x7890...def1", stake: "42.3", timeRemaining: "2h 47m" },
+        { address: "0x4567...abc8", stake: "28.7", timeRemaining: "3h 22m" },
+        { address: "0x1234...789a", stake: "15.2", timeRemaining: "5h 05m" },
+      ];
+      
+      setCachedLeaderboard(leaderboard);
+      return leaderboard;
     } catch (error) {
       console.error("Error getting leaderboard:", error)
 
