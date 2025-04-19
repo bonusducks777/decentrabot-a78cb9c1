@@ -12,8 +12,17 @@ export const StakingLeaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 });
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Use a mount check to prevent fetching on first render
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   useEffect(() => {
+    // Only run this effect if the component is mounted
+    if (!isMounted) return;
+    
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
@@ -45,12 +54,13 @@ export const StakingLeaderboard = () => {
       }
     };
     
+    // Initial fetch
     fetchLeaderboard();
     
     // Refresh leaderboard every 30 seconds
     const interval = setInterval(fetchLeaderboard, 30000);
     return () => clearInterval(interval);
-  }, [blockchainUtils, address]);
+  }, [blockchainUtils, address, isMounted]); // Add isMounted to dependencies
   
   return (
     <Card className="neo-card p-4">
