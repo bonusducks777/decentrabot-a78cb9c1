@@ -63,13 +63,13 @@ const AppPage = () => {
             </div>
             
             {/* Right Column - Fixed layout to prevent overlapping */}
-            <div className="col-span-12 lg:col-span-4 space-y-4">
+            <div className="col-span-12 lg:col-span-4 space-y-2">
               {/* Fixed height for ChatSystem */}
               <div className="h-[280px]">
                 <ChatSystem />
               </div>
               {/* Dashboard with fixed height */}
-              <div className="h-[180px]">
+              <div className="h-[140px]">
                 <StakeDashboard />
               </div>
               <StakingLeaderboard />

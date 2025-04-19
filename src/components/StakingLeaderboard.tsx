@@ -75,7 +75,7 @@ export const StakingLeaderboard = () => {
   return (
     <Card className="neo-card p-2">
       <div className="mb-2">
-        <h3 className="text-base font-semibold flex items-center gap-2">
+        <h3 className="text-sm font-semibold flex items-center gap-2">
           <Trophy className="h-4 w-4 text-yellow-500" />
           Staking Leaderboard
         </h3>
