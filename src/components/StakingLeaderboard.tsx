@@ -1,123 +1,187 @@
-
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { Card } from "@/components/ui/card"
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
-import { useAccount } from "wagmi"
-import { Trophy, Clock } from "lucide-react"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useBlockchainUtils } from "@/lib/blockchainUtils"
+import { useState, useEffect } from "react"
+import { useAccount } from "wagmi"
 
-export const StakingLeaderboard = () => {
+interface StakingLeaderboardProps {
+  robotId: string
+}
+
+interface LeaderboardEntry {
+  address: string
+  stake: string
+  timeRemaining: string
+  isCurrentUser?: boolean
+}
+
+export function StakingLeaderboard({ robotId }: StakingLeaderboardProps) {
+  const { getLeaderboard, getUserBalance, stakeTokens, withdrawTokens } = useBlockchainUtils()
+  const [stakeAmount, setStakeAmount] = useState("")
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [userStake, setUserStake] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
   const { address } = useAccount()
-  const blockchainUtils = useBlockchainUtils()
-  const [leaderboardData, setLeaderboardData] = useState([])
-  const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 45 })
-  const [loading, setLoading] = useState(true)
-  
-  // Using a ref to track if the component is mounted
-  const isMountedRef = useRef(true)
 
   useEffect(() => {
-    // Set isMounted to true when component mounts
-    isMountedRef.current = true
-    
+    let isMounted = true
+
     const fetchLeaderboard = async () => {
-      if (!isMountedRef.current) return
+      if (isLoading) return
 
       try {
-        setLoading(true)
-        const data = await blockchainUtils.getLeaderboard()
+        setIsLoading(true)
+        const data = await getLeaderboard()
 
-        if (!isMountedRef.current) return
-
-        // Format the data
-        const formattedData = data.map((entry, index) => ({
-          position: index + 1,
-          address: entry.address,
-          stake: Number.parseFloat(entry.stake),
-          isCurrentUser: address && entry.address.toLowerCase().includes(address.slice(2, 6).toLowerCase()),
-          timeRemaining: entry.timeRemaining,
-        }))
-
-        setLeaderboardData(formattedData)
-
-        // Set time remaining for current session
-        if (formattedData.length > 0) {
-          const topTime = formattedData[0].timeRemaining.split("h ")
-          setTimeRemaining({
-            hours: Number.parseInt(topTime[0]),
-            minutes: Number.parseInt(topTime[1].replace("m", "")),
-          })
+        if (isMounted && data) {
+          setLeaderboard(data)
         }
       } catch (error) {
         console.error("Error fetching leaderboard:", error)
       } finally {
-        if (isMountedRef.current) {
-          setLoading(false)
-        }
+        if (isMounted) setIsLoading(false)
       }
     }
 
-    // Initial fetch
     fetchLeaderboard()
 
-    // Refresh leaderboard every 30 seconds
+    // Set up interval to fetch data periodically (every 30 seconds)
     const interval = setInterval(fetchLeaderboard, 30000)
 
     // Cleanup function
     return () => {
-      isMountedRef.current = false
+      isMounted = false
       clearInterval(interval)
     }
-  }, [address, blockchainUtils]) // Dependencies
+  }, [robotId])
+
+  // Fetch user stake separately
+  useEffect(() => {
+    if (!address) return
+
+    const fetchUserBalance = async () => {
+      try {
+        const balanceStr = await getUserBalance()
+        setUserStake(Number(parseFloat(balanceStr)))
+      } catch (error) {
+        console.error("Error fetching user balance:", error)
+      }
+    }
+
+    fetchUserBalance()
+
+    // Set up interval to fetch user balance periodically
+    const interval = setInterval(fetchUserBalance, 30000)
+
+    return () => clearInterval(interval)
+  }, [address, getUserBalance])
+
+  const handleStake = async () => {
+    const amount = Number.parseFloat(stakeAmount)
+    if (isNaN(amount) || amount <= 0) return
+
+    try {
+      await stakeTokens(stakeAmount)
+      setStakeAmount("")
+
+      // Refresh leaderboard and user stake after staking
+      const data = await getLeaderboard()
+      setLeaderboard(data)
+
+      if (address) {
+        const balanceStr = await getUserBalance()
+        setUserStake(Number(parseFloat(balanceStr)))
+      }
+    } catch (error) {
+      console.error("Error staking tokens:", error)
+    }
+  }
+
+  const handleUnstake = async () => {
+    try {
+      await withdrawTokens(userStake.toString())
+
+      // Refresh leaderboard and user stake after unstaking
+      const data = await getLeaderboard()
+      setLeaderboard(data)
+
+      if (address) {
+        const balanceStr = await getUserBalance()
+        setUserStake(Number(parseFloat(balanceStr)))
+      }
+    } catch (error) {
+      console.error("Error unstaking tokens:", error)
+    }
+  }
 
   return (
-    <Card className="neo-card p-2">
-      <div className="mb-2">
-        <h3 className="text-sm font-semibold flex items-center gap-2">
-          <Trophy className="h-4 w-4 text-yellow-500" />
-          Staking Leaderboard
-        </h3>
-      </div>
+    <Card className="flex flex-col h-[600px]">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Staking Leaderboard</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-y-auto p-3 space-y-4">
+        {leaderboard.map((stake, index) => {
+          const isCurrentUser = address && stake.address.toLowerCase().includes(address.toLowerCase().slice(2, 6))
+          const timeRemaining = stake.timeRemaining
 
-      <div className="max-h-[180px] overflow-y-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-xs">Rank</TableHead>
-              <TableHead className="text-xs">Address</TableHead>
-              <TableHead className="text-right text-xs">Stake</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {leaderboardData.map((entry) => (
-              <TableRow key={entry.position} className={entry.isCurrentUser ? "bg-orange-500/10" : ""}>
-                <TableCell className="font-medium text-xs">{entry.position}</TableCell>
-                <TableCell className={`text-xs ${entry.isCurrentUser ? "text-orange-400" : ""}`}>
-                  {entry.address}
-                  {entry.position === 1 && (
-                    <span className="ml-1 text-xs bg-yellow-500/20 text-yellow-500 px-1 py-0.5 rounded-full">
-                      Controller
-                    </span>
+          return (
+            <div
+              key={stake.address}
+              className={`flex justify-between items-center p-2 rounded-md ${
+                index === 0 ? "bg-orange-100 dark:bg-orange-900/30" : ""
+              } ${isCurrentUser ? "border border-orange-500" : ""}`}
+            >
+              <div className="flex items-center gap-2">
+                <div className="font-bold">{index + 1}</div>
+                <div className="flex flex-col">
+                  <span className={`font-medium ${index === 0 ? "text-orange-500" : ""}`}>
+                    {stake.address}
+                    {index === 0 && " (Controller)"}
+                    {isCurrentUser && " (You)"}
+                  </span>
+                  {index === 0 && timeRemaining && (
+                    <span className="text-xs text-muted-foreground">Time remaining: {timeRemaining}</span>
                   )}
-                </TableCell>
-                <TableCell className="text-right text-xs">{entry.stake}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+                </div>
+              </div>
+              <div className="font-medium">{stake.stake} DOT</div>
+            </div>
+          )
+        })}
 
-      <div className="mt-2 p-1 bg-background/50 rounded-md border border-border flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1">
-          <Clock className="h-3 w-3 text-orange-400" />
-          Session ends:
+        {leaderboard.length === 0 && !isLoading && (
+          <div className="text-center py-8 text-muted-foreground">No stakes yet. Be the first to stake!</div>
+        )}
+
+        {isLoading && leaderboard.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">Loading leaderboard...</div>
+        )}
+      </CardContent>
+      <CardFooter className="flex flex-col p-3 gap-2">
+        <div className="text-sm mb-1">
+          Your stake: <span className="font-medium">{userStake.toFixed(2)} DOT</span>
         </div>
-        <div className="font-mono text-orange-400">
-          {timeRemaining.hours}h {timeRemaining.minutes}m
+        <div className="flex gap-2 w-full">
+          <Input
+            type="number"
+            placeholder="Amount to stake"
+            value={stakeAmount}
+            onChange={(e) => setStakeAmount(e.target.value)}
+            className="flex-1"
+          />
+          <Button onClick={handleStake} className="bg-orange-500 hover:bg-orange-600">
+            Stake
+          </Button>
         </div>
-      </div>
+        {userStake > 0 && (
+          <Button variant="outline" onClick={handleUnstake} className="w-full">
+            Unstake All
+          </Button>
+        )}
+      </CardFooter>
     </Card>
   )
 }

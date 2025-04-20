@@ -18,6 +18,8 @@ import { useBlockchainUtils } from "@/lib/blockchainUtils";
 const AppPage = () => {
   const { isConnected } = useAccount();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [location, setLocation] = useState(searchParams.get("location") || "Warehouse");
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const [selectedRobot, setSelectedRobot] = useState(searchParams.get("robot") || "robot-1");
   const blockchainUtils = useBlockchainUtils();
   
@@ -59,7 +61,7 @@ const AppPage = () => {
                 chargeRate={selectedRobotData.chargeRate}
               />
               <ControlPanel />
-              <RobotLocationMap />
+              <RobotLocationMap coordinates={coordinates} location={location} />
             </div>
             
             {/* Right Column - Fixed layout to prevent overlapping */}
@@ -72,8 +74,13 @@ const AppPage = () => {
               <div className="h-[140px]">
                 <StakeDashboard />
               </div>
-              <StakingLeaderboard />
-              <RobotStatus />
+              <StakingLeaderboard
+              robotId={selectedRobot} />
+              <RobotStatus 
+                batteryLevel={85}
+                connectionStatus="Connected"
+                lastActive="2023-11-08T14:30:00Z"
+              />
             </div>
             
             {/* Full Width Bottom Panel */}

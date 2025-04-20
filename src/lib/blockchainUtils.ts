@@ -1,59 +1,61 @@
-
 "use client"
 
-import { useAccount, usePublicClient, useWalletClient } from "wagmi"
+import { useAccount } from "wagmi"
+import { ethers } from "ethers"
 import { useState, useEffect } from "react"
 
-type LeaderboardEntry = {
-  address: string;
-  stake: string;
-  timeRemaining: string;
-}
-
-// Mock Contract address - This is a placeholder
-export const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"
+// RPC endpoint and contract configuration
+const RPC_URL = "https://westend-asset-hub-rpc.polkadot.io"
+const CONTRACT_ADDRESS = "0xB3f57e8fc33f61Ce464a9c287f34EF3FD422B1ae"
+const ABI = [
+  "function stakeTokens() payable",
+  "function withdrawTokens(uint256 amount)",
+  "function getStakedBalance(address user) view returns (uint256)",
+  "function getHighestStaker() view returns (address)",
+  "function isController(address user) view returns (bool)",
+  "function getBotFee() view returns (uint256)",
+  "function getRobotLocation(string robotId) view returns (int256 lat, int256 lng)",
+  "function getRobotBatteryLevel(string robotId) view returns (uint256)",
+  "function getRobotUptime(string robotId) view returns (uint256)",
+  "function getTimeRemaining(address user) view returns (uint256)",
+  "function getStakingLeaderboard(uint256 count) view returns (address[] addresses, uint256[] amounts)",
+  "function forceFeeCollection()",
+  "function currentController() view returns (address)",
+  "function sendCommand(string robotId, string command)"
+]
 
 export const useBlockchainUtils = () => {
   const { address, isConnected } = useAccount()
-  const publicClient = usePublicClient()
-  const { data: walletClient } = useWalletClient()
+  // Local state for cached leaderboard
+  const [cachedLeaderboard, setCachedLeaderboard] = useState<any[]>([])
 
-  const [cachedLeaderboard, setCachedLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [cachedRobotIds, setCachedRobotIds] = useState<string[]>([])
+  // Instantiate read-only provider
+  const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
 
-  // Fetch robot IDs on component mount
-  useEffect(() => {
-    if (isConnected && publicClient) {
-      fetchRobotIds()
+  // Helper to get signer for write operations
+  const getSigner = () => {
+    if (typeof window !== "undefined" && (window as any).ethereum && isConnected) {
+      const web3Provider = new ethers.providers.Web3Provider((window as any).ethereum)
+      return web3Provider.getSigner()
     }
-  }, [isConnected, publicClient])
-
-  // Fetch robot IDs from the contract
-  const fetchRobotIds = async () => {
-    try {
-      // This is a placeholder function
-      console.log("Fetching robot IDs...")
-      
-      // Simulating fetch with default IDs
-      setCachedRobotIds(["robot-1", "robot-2", "robot-3", "robot-4", "robot-5", "robot-6"])
-    } catch (error) {
-      console.error("Error fetching robot IDs:", error)
-      // Fallback to default robot IDs
-      setCachedRobotIds(["robot-1", "robot-2", "robot-3", "robot-4", "robot-5", "robot-6"])
-    }
+    return null
   }
 
   // ========== STAKING OPERATIONS ==========
 
   const stakeTokens = async (amount: string) => {
-    if (!isConnected || !walletClient) {
+    if (!isConnected) {
       console.error("Wallet not connected")
       return false
     }
 
     try {
-      // Placeholder for staking function - just log and return success
-      console.log(`PLACEHOLDER: Staking ${amount} WND tokens`)
+      const signer = getSigner()
+      if (!signer) throw new Error("No signer available")
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer as ethers.Signer)
+      const tx = await contract.stakeTokens({ value: ethers.utils.parseEther(amount) })
+      await tx.wait()
+      console.log("Staking transaction:", tx.hash)
       return true
     } catch (error) {
       console.error("Error staking tokens:", error)
@@ -62,14 +64,19 @@ export const useBlockchainUtils = () => {
   }
 
   const withdrawTokens = async (amount: string) => {
-    if (!isConnected || !walletClient) {
+    if (!isConnected) {
       console.error("Wallet not connected")
       return false
     }
 
     try {
-      // Placeholder for withdraw function - just log and return success
-      console.log(`PLACEHOLDER: Withdrawing ${amount} WND tokens`)
+      const signer = getSigner()
+      if (!signer) throw new Error("No signer available")
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer as ethers.Signer)
+       
+      const tx = await contract.withdrawTokens(ethers.utils.parseEther(amount))
+      await tx.wait()
+      console.log("Withdrawal transaction:", tx.hash)
       return true
     } catch (error) {
       console.error("Error withdrawing tokens:", error)
@@ -80,186 +87,100 @@ export const useBlockchainUtils = () => {
   // ========== BALANCE AND CONTROL CHECKS ==========
 
   const getUserBalance = async () => {
-    if (!isConnected || !address || !publicClient) {
+    if (!isConnected || !address) {
       return "0.0"
     }
 
     try {
-      // Placeholder function - return mock balance
-      return "42.5"
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider)
+      const balanceBN = await contract.getStakedBalance(address)
+      return ethers.utils.formatEther(balanceBN)
     } catch (error) {
       console.error("Error getting user balance:", error)
       return "0.0"
     }
   }
 
-  const getHighestStaker = async () => {
-    if (!publicClient) {
-      return "0x0000000000000000000000000000000000000000"
-    }
-
-    try {
-      // Placeholder function - return mock address
-      return "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-    } catch (error) {
-      console.error("Error getting highest staker:", error)
-      return "0x0000000000000000000000000000000000000000"
-    }
-  }
-
-  const isController = async () => {
-    if (!isConnected || !address || !publicClient) {
-      return false
-    }
-
-    try {
-      // Placeholder function - mock controller status
-      return Math.random() > 0.8 // 20% chance to be controller for testing
-    } catch (error) {
-      console.error("Error checking controller status:", error)
-      return false
-    }
-  }
-
-  const getBotFee = async () => {
-    if (!publicClient) {
-      return "2.5"
-    }
-
-    try {
-      // Placeholder function - return mock fee
-      return "2.5"
-    } catch (error) {
-      console.error("Error getting bot fee:", error)
-      return "2.5"
-    }
-  }
-
-  const getRobotLocation = async (robotId: string) => {
-    if (!publicClient) {
-      // Fallback to default locations
-      switch (robotId) {
-        case "robot-1":
-          return { lat: 40.7128, lng: -74.006 } // New York
-        case "robot-2":
-          return { lat: 51.5074, lng: -0.1278 } // London
-        case "robot-3":
-          return { lat: 35.6762, lng: 139.6503 } // Tokyo
-        case "robot-4":
-          return { lat: -33.8688, lng: 151.2093 } // Sydney
-        case "robot-5":
-          return { lat: 48.8566, lng: 2.3522 } // Paris
-        case "robot-6":
-          return { lat: 37.7749, lng: -122.4194 } // San Francisco
-        default:
-          return { lat: 0, lng: 0 }
-      }
-    }
-
-    try {
-      // Placeholder function - return mock location based on robotId
-      switch (robotId) {
-        case "robot-1":
-          return { lat: 40.7128, lng: -74.006 } // New York
-        case "robot-2":
-          return { lat: 51.5074, lng: -0.1278 } // London
-        case "robot-3":
-          return { lat: 35.6762, lng: 139.6503 } // Tokyo
-        case "robot-4":
-          return { lat: -33.8688, lng: 151.2093 } // Sydney
-        case "robot-5":
-          return { lat: 48.8566, lng: 2.3522 } // Paris
-        case "robot-6":
-          return { lat: 37.7749, lng: -122.4194 } // San Francisco
-        default:
-          return { lat: 0, lng: 0 }
-      }
-    } catch (error) {
-      console.error(`Error getting location for robot ${robotId}:`, error)
-      return { lat: 40.7128, lng: -74.006 } // Default to New York
-    }
-  }
-
-  const getRobotBatteryLevel = async (robotId: string) => {
-    // Fixed value to prevent random updates
-    return 85; // Fixed 85% battery
-  }
-
-  const getRobotUptime = async (robotId: string) => {
-    // Fixed value to prevent random updates
-    return "3h 45m";
-  }
-
-  const sendRobotCommand = async (robotId: string, command: string) => {
-    if (!isConnected || !walletClient || !address) {
-      console.error("Wallet not connected")
-      return false
-    }
-
-    try {
-      // Placeholder function - log command and return success
-      console.log(`PLACEHOLDER: Command sent to ${robotId}: ${command}`)
-      return true
-    } catch (error) {
-      console.error(`Error sending command to ${robotId}:`, error)
-      return false
-    }
-  }
-
-  // ========== CONTRACT UTILITIES ==========
-
-  const getTimeRemaining = async (userAddress: string) => {
-    if (!publicClient) {
-      return "1h 32m"
-    }
-
-    try {
-      // Placeholder function - return mock time remaining
-      return "1h 32m"
-    } catch (error) {
-      console.error(`Error getting time remaining for ${userAddress}:`, error)
-      return "1h 32m"
-    }
-  }
+  // ========== LEADERBOARD ==========
 
   const getLeaderboard = async () => {
-    if (!publicClient) {
-      return [
-        { address: "0xd8da...6273", stake: "125.5", timeRemaining: "1h 32m" },
-        { address: "0xab12...9f3d", stake: "85.0", timeRemaining: "4h 15m" },
-        { address: "0x7890...def1", stake: "42.3", timeRemaining: "2h 47m" },
-        { address: "0x4567...abc8", stake: "28.7", timeRemaining: "3h 22m" },
-        { address: "0x1234...789a", stake: "15.2", timeRemaining: "5h 05m" },
-      ]
-    }
-
     try {
-      // Placeholder function - return mock leaderboard
-      const leaderboard = [
-        { address: "0xd8da...6273", stake: "125.5", timeRemaining: "1h 32m" },
-        { address: "0xab12...9f3d", stake: "85.0", timeRemaining: "4h 15m" },
-        { address: "0x7890...def1", stake: "42.3", timeRemaining: "2h 47m" },
-        { address: "0x4567...abc8", stake: "28.7", timeRemaining: "3h 22m" },
-        { address: "0x1234...789a", stake: "15.2", timeRemaining: "5h 05m" },
-      ];
-      
-      setCachedLeaderboard(leaderboard);
-      return leaderboard;
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider)
+      const [addresses, amounts] = await contract.getStakingLeaderboard(5)
+      const leaderboard = await Promise.all(
+        addresses.map(async (addr: string, i: number) => {
+          const amount = ethers.utils.formatEther(amounts[i])
+          const timeMinutes = Number(await contract.getTimeRemaining(addr))
+          const hours = Math.floor(timeMinutes / 60)
+          const mins = timeMinutes % 60
+          return {
+            address: addr,
+            stake: amount,
+            timeRemaining: hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
+          }
+        })
+      )
+      setCachedLeaderboard(leaderboard)
+      return leaderboard
     } catch (error) {
-      console.error("Error getting leaderboard:", error)
+      console.error("Error fetching leaderboard:", error)
+      return cachedLeaderboard
+    }
+  }
 
-      // Return cached leaderboard if available, otherwise fallback to default
-      if (cachedLeaderboard.length > 0) {
-        return cachedLeaderboard
-      }
+  // ========== TOP STAKER & BALANCE ==========
 
-      return [
-        { address: "0xd8da...6273", stake: "125.5", timeRemaining: "1h 32m" },
-        { address: "0xab12...9f3d", stake: "85.0", timeRemaining: "4h 15m" },
-        { address: "0x7890...def1", stake: "42.3", timeRemaining: "2h 47m" },
-        { address: "0x4567...abc8", stake: "28.7", timeRemaining: "3h 22m" },
-        { address: "0x1234...789a", stake: "15.2", timeRemaining: "5h 05m" },
-      ]
+  const getHighestStaker = async () => {
+    try {
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider)
+      return await contract.getHighestStaker()
+    } catch (error) {
+      console.error("Error getting highest staker:", error)
+      return ethers.constants.AddressZero
+    }
+  }
+
+  const getStakedBalance = async (userAddress: string) => {
+    try {
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider)
+      const balanceBN = await contract.getStakedBalance(userAddress)
+      return ethers.utils.formatEther(balanceBN)
+    } catch (error) {
+      console.error("Error getting staked balance:", error)
+      return "0.0"
+    }
+  }
+
+  // ========== CONTROLLER & COMMAND ==========
+
+  // Poll the current controller
+  const getCurrentController = async () => {
+    try {
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider)
+      return await contract.currentController()
+    } catch (error) {
+      console.error("Error fetching current controller:", error)
+      return ethers.constants.AddressZero
+    }
+  }
+
+  // Send a command to a robot
+  const sendRobotCommand = async (robotId: string, command: string) => {
+    if (!isConnected) {
+      console.error("Wallet not connected for command")
+      return false
+    }
+    try {
+      const signer = getSigner()
+      if (!signer) throw new Error("No signer for sendCommand")
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer as ethers.Signer)
+      const tx = await contract.sendCommand(robotId, command)
+      await tx.wait()
+      console.log("Command sent:", command)
+      return true
+    } catch (error) {
+      console.error("Error sending robot command:", error)
+      return false
     }
   }
 
@@ -269,16 +190,13 @@ export const useBlockchainUtils = () => {
     stakeTokens,
     withdrawTokens,
     getUserBalance,
-    getHighestStaker,
-    isController,
-    getBotFee,
-    getRobotLocation,
-    getRobotBatteryLevel,
-    getRobotUptime,
-    sendRobotCommand,
-    getTimeRemaining,
     getLeaderboard,
+    getHighestStaker,
+    getStakedBalance,
+    getCurrentController,
+    sendRobotCommand
   }
+
 }
 
 export default useBlockchainUtils

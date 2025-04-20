@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
@@ -10,73 +9,52 @@ import { useBlockchainUtils } from "@/lib/blockchainUtils";
 export const ControlPanel = () => {
   const { address, isConnected } = useAccount();
   const [isCurrentController, setIsCurrentController] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lastCommand, setLastCommand] = useState("");
   const [selectedRobotId, setSelectedRobotId] = useState("robot-1");
-  const [showVerifyDialog, setShowVerifyDialog] = useState(false);
 
-  const blockchainUtils = useBlockchainUtils();
+  const { getCurrentController, sendRobotCommand } = useBlockchainUtils();
 
   useEffect(() => {
-    const checkControllerStatus = async () => {
+    let interval: NodeJS.Timeout;
+    const checkController = async () => {
       if (isConnected && address) {
         try {
-          // Use a placeholder value instead of making blockchain calls
-          setIsCurrentController(false); // Hardcoded to false for now
-          
-          // For demonstration purposes, show the dialog occasionally
-          if (Math.random() > 0.8) { // 20% chance to show dialog for testing
-            setShowVerifyDialog(true);
-          }
+          const controller = await getCurrentController();
+          setIsCurrentController(controller.toLowerCase() === address.toLowerCase());
         } catch (error) {
           console.error("Error checking controller status:", error);
         }
       } else {
         setIsCurrentController(false);
-        setIsVerified(false);
       }
-    };
-
-    checkControllerStatus();
-  }, [isConnected, address]);
-
-  const handleVerifyControl = async () => {
-    setLoading(true);
-    try {
-      // Use setTimeout as a placeholder for blockchain interaction
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIsVerified(true);
-      setShowVerifyDialog(false);
-      toast.success("Control verified successfully");
-    } catch (error) {
-      console.error("Error verifying control:", error);
-      toast.error("Failed to verify control");
-    } finally {
-      setLoading(false);
     }
-  };
+    checkController();
+    interval = setInterval(checkController, 5000);
+    return () => clearInterval(interval);
+  }, [isConnected, address, getCurrentController]);
 
   const handleRobotCommand = async (command) => {
-    if (!isVerified) {
-      toast.error("You need to verify control first");
+    if (!isCurrentController) {
+      toast.error("You are not the controller");
       return;
     }
-    
     setLoading(true);
     try {
-      // Use a placeholder value instead of blockchain call
-      setTimeout(() => {
+      const success = await sendRobotCommand(selectedRobotId, command);
+      if (success) {
         toast.success(`Command sent: ${command}`);
         setLastCommand(command);
-        setLoading(false);
-      }, 500);
+      } else {
+        toast.error("Error sending command");
+      }
     } catch (error) {
       console.error(`Error sending command:`, error);
       toast.error("Error sending command");
+    } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <Card className="neo-card p-3 mt-4 mb-4 transition-all duration-300 hover:shadow-lg animate-fade-in relative">
@@ -90,28 +68,28 @@ export const ControlPanel = () => {
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("up")}
-              disabled={!isVerified || !isCurrentController || loading}
+              disabled={!isCurrentController || loading}
             >
               ↑
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("left")}
-              disabled={!isVerified || !isCurrentController || loading}
+              disabled={!isCurrentController || loading}
             >
               ←
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("down")}
-              disabled={!isVerified || !isCurrentController || loading}
+              disabled={!isCurrentController || loading}
             >
               ↓
             </Button>
             <Button 
               className="h-14 w-14 rounded-full neo-button transition-all duration-200 transform hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
               onClick={() => handleRobotCommand("right")}
-              disabled={!isVerified || !isCurrentController || loading}
+              disabled={!isCurrentController || loading}
             >
               →
             </Button>
@@ -145,26 +123,7 @@ export const ControlPanel = () => {
         </div>
       )}
 
-      {/* Verify Control Dialog */}
-      <Dialog open={showVerifyDialog} onOpenChange={setShowVerifyDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Verify Control</DialogTitle>
-          </DialogHeader>
-          <div className="py-6">
-            <p className="text-center text-muted-foreground mb-4">
-              You have the highest stake! Sign to take control of the robot.
-            </p>
-            <Button 
-              onClick={handleVerifyControl}
-              className="w-full neo-button"
-              disabled={loading}
-            >
-              {loading ? "Verifying..." : "Sign to Verify Control"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Removed verify dialog; control auto-enabled when on-chain controller matches user */}
     </Card>
   );
 };

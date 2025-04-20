@@ -1,99 +1,129 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Card } from "@/components/ui/card"
-import { Map } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useRef, useState } from "react"
 import { useBlockchainUtils } from "@/lib/blockchainUtils"
-import { useSearchParams } from "react-router-dom"
 
-export const RobotLocationMap = () => {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [location, setLocation] = useState({ lat: 40.7128, lng: -74.006 })
-  const [searchParams] = useSearchParams()
-  const robotId = searchParams.get("robot") || "robot-1"
+interface RobotLocationMapProps {
+  location: string
+  coordinates: {
+    x: number
+    y: number
+  }
+}
+
+export function RobotLocationMap({
+  location: initialLocation,
+  coordinates: initialCoordinates,
+}: RobotLocationMapProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [location, setLocation] = useState(initialLocation)
+  const [coordinates, setCoordinates] = useState(initialCoordinates)
+  const [isLoading, setIsLoading] = useState(false)
   const { getRobotLocation } = useBlockchainUtils()
 
-  // Memoize the getRobotLocation function to prevent it from changing on every render
-  const memoizedGetLocation = useCallback((id: string) => {
-    return getRobotLocation(id)
-  }, []) // Empty dependency array ensures stable function reference
-
-  // Fetch robot location
   useEffect(() => {
+    let isMounted = true
+
     const fetchLocation = async () => {
+      if (isLoading) return
+
       try {
-        const robotLocation = await memoizedGetLocation(robotId)
-        setLocation(robotLocation)
+        setIsLoading(true)
+        const robotLocation = await getRobotLocation("robot-1")
+
+        if (isMounted) {
+          setCoordinates({
+            x: Math.floor(robotLocation.lat * 100) / 100,
+            y: Math.floor(robotLocation.lng * 100) / 100,
+          })
+        }
       } catch (error) {
-        console.error("Failed to fetch robot location:", error)
+        console.error("Error fetching location:", error)
+      } finally {
+        if (isMounted) setIsLoading(false)
       }
     }
 
     fetchLocation()
-    const interval = setInterval(fetchLocation, 30000) // Update every 30 seconds
 
-    return () => clearInterval(interval)
-  }, [robotId, memoizedGetLocation]) // Only depend on robotId and the memoized function
+    // Set up interval to fetch data periodically (every 30 seconds)
+    const interval = setInterval(fetchLocation, 30000)
 
-  // Initialize and update map
+    // Cleanup function
+    return () => {
+      isMounted = false
+      clearInterval(interval)
+    }
+  }, [])
+
   useEffect(() => {
-    if (!mapRef.current) return
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-    // In a real implementation, this would use a mapping library like Leaflet or Mapbox
-    // For this demo, we'll just show a static representation
-    const mapContainer = mapRef.current
-    const robotMarker = document.createElement("div")
-    robotMarker.className =
-      "absolute w-4 h-4 bg-orange-500 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-2 border-white shadow-md pulse-marker"
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
 
-    // Calculate position based on coordinates (simplified)
-    const x = ((location.lng + 180) / 360) * 100
-    const y = ((90 - location.lat) / 180) * 100
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    robotMarker.style.left = `${x}%`
-    robotMarker.style.top = `${y}%`
+    // Draw grid
+    ctx.strokeStyle = "#e2e8f0"
+    ctx.lineWidth = 0.5
 
-    // Clear previous markers
-    mapContainer.innerHTML = ""
-    mapContainer.appendChild(robotMarker)
-  }, [location])
+    // Draw vertical grid lines
+    for (let x = 0; x <= canvas.width; x += 20) {
+      ctx.beginPath()
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, canvas.height)
+      ctx.stroke()
+    }
+
+    // Draw horizontal grid lines
+    for (let y = 0; y <= canvas.height; y += 20) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(canvas.width, y)
+      ctx.stroke()
+    }
+
+    // Draw robot position
+    const robotX = (coordinates.x / 100) * canvas.width
+    const robotY = (coordinates.y / 100) * canvas.height
+
+    // Draw pulsing circle
+    ctx.beginPath()
+    ctx.arc(robotX, robotY, 10, 0, Math.PI * 2)
+    ctx.fillStyle = "rgba(249, 115, 22, 0.3)"
+    ctx.fill()
+
+    // Draw robot marker
+    ctx.beginPath()
+    ctx.arc(robotX, robotY, 5, 0, Math.PI * 2)
+    ctx.fillStyle = "#f97316"
+    ctx.fill()
+  }, [coordinates])
 
   return (
-    <Card className="neo-card p-3 mb-4">
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex items-center gap-2">
-          <Map className="h-5 w-5 text-orange-400" />
-          <h3 className="text-lg font-semibold">Robot Location</h3>
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Robot Location</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="text-sm text-muted-foreground">
+          Current Location: <span className="font-medium">{location}</span>
         </div>
-        <div className="text-xs text-muted-foreground">
-          {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+        <div className="text-sm text-muted-foreground">
+          Coordinates:{" "}
+          <span className="font-medium">
+            X: {coordinates.x}, Y: {coordinates.y}
+          </span>
         </div>
-      </div>
-      <div className="aspect-video bg-slate-800 rounded-md relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 grid grid-cols-8 grid-rows-4">
-          {Array.from({ length: 32 }).map((_, i) => (
-            <div key={i} className="border border-white/10"></div>
-          ))}
+        <div className="relative border rounded-md overflow-hidden aspect-video">
+          <canvas ref={canvasRef} width={300} height={150} className="w-full h-full" />
         </div>
-        <div ref={mapRef} className="absolute inset-0">
-          {/* Robot marker will be inserted here by useEffect */}
-        </div>
-        <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-xs">
-          Live Location
-        </div>
-      </div>
-      <style>
-        {`
-        @keyframes pulse-marker {
-          0% { box-shadow: 0 0 0 0 rgba(243, 145, 65, 0.7); }
-          70% { box-shadow: 0 0 0 10px rgba(243, 145, 65, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(243, 145, 65, 0); }
-        }
-        .pulse-marker {
-          animation: pulse-marker 2s infinite;
-        }
-        `}
-      </style>
+      </CardContent>
     </Card>
   )
 }
+

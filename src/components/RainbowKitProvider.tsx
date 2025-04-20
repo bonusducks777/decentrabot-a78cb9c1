@@ -1,11 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { RainbowKitProvider as RKProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
-import { http, createConfig, WagmiProvider } from "wagmi";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "@/components/ThemeProvider";
 import "@rainbow-me/rainbowkit/styles.css";
+import { publicProvider } from "wagmi/providers/public";
 
 interface RainbowKitWrapperProps {
   children: React.ReactNode;
@@ -17,46 +17,37 @@ const projectId = "f648e94e1f1c32327aaa0416d6409e2b";
 // Define the Asset-Hub Westend testnet
 const westendAssetHub = {
   id: 420420421,
-  name: 'Asset-Hub Westend Testnet',
+  name: 'Asset-Hub Westend TestNet',
   nativeCurrency: {
     name: 'Westend',
     symbol: 'WND',
     decimals: 12,
   },
   rpcUrls: {
-    default: {
-      http: ['https://westend-asset-hub-eth-rpc.polkadot.io'],
-    },
-    public: {
-      http: ['https://westend-asset-hub-eth-rpc.polkadot.io'],
-    },
+    default: { http: ['https://westend-asset-hub-rpc.polkadot.io'] },
+    public: { http: ['https://westend-asset-hub-rpc.polkadot.io'] },
   },
   blockExplorers: {
     default: {
-      name: 'Blockscout',
-      url: 'https://blockscout-asset-hub.parity-chains-scw.parity.io',
+      name: 'Subscan',
+      url: 'https://assethub-westend.subscan.io',
     },
   },
   testnet: true,
 } as const;
 
 // Chain configuration with Asset-Hub Westend for Polkadot ecosystem
-const chains = [westendAssetHub] as const;
+const chainsConfig = [westendAssetHub] as const;
 
-// Get wallets using the proper API for RainbowKit v2
-const { connectors } = getDefaultWallets({
-  appName: "Decentrabot",
-  projectId,
-  // Remove the chains property since it's not part of ConnectorsForWalletsParameters
-});
-
+// Configure chains and public client
+const { chains, publicClient } = configureChains(chainsConfig, [publicProvider()]);
+// Get wallets
+const { connectors } = getDefaultWallets({ appName: "Decentrabot", projectId, chains });
 // Create wagmi config
-const config = createConfig({
-  chains,
-  transports: {
-    [westendAssetHub.id]: http(),
-  },
+const wagmiConfig = createConfig({
+  autoConnect: true,
   connectors,
+  publicClient,
 });
 
 // Create query client with optimized defaults
@@ -82,15 +73,15 @@ export const RainbowKitProvider: React.FC<RainbowKitWrapperProps> = ({ children 
   if (!mounted) return null;
 
   return (
-    <WagmiProvider config={config}>
+    <WagmiConfig config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RKProvider theme={theme === "dark" ? darkTheme() : lightTheme()}>
           {children}
         </RKProvider>
       </QueryClientProvider>
-    </WagmiProvider>
+    </WagmiConfig>
   );
 };
 
 export default RainbowKitProvider;
-export { config };
+// `config` export removed; wagmiConfig is internal to this module
