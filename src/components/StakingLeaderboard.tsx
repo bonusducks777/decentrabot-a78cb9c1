@@ -1,8 +1,6 @@
 "use client"
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
 import { useBlockchainUtils } from "@/lib/blockchainUtils"
 import { useState, useEffect } from "react"
 import { useAccount } from "wagmi"
@@ -16,172 +14,148 @@ interface LeaderboardEntry {
   stake: string
   timeRemaining: string
   isCurrentUser?: boolean
+  countdown?: {
+    minutes: number
+    seconds: number
+  }
 }
 
 export function StakingLeaderboard({ robotId }: StakingLeaderboardProps) {
-  const { getLeaderboard, getUserBalance, stakeTokens, withdrawTokens } = useBlockchainUtils()
-  const [stakeAmount, setStakeAmount] = useState("")
+  const { getLeaderboard, calculateTimeRemaining } = useBlockchainUtils()
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
-  const [userStake, setUserStake] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const { address } = useAccount()
 
+  // Add state for countdown
+  const [countdown, setCountdown] = useState({ minutes: 0, seconds: 0 })
+
   useEffect(() => {
     let isMounted = true
+    let countdownInterval: NodeJS.Timeout | null = null
 
-    const fetchLeaderboard = async () => {
-      if (isLoading) return
+    // Start countdown timer
+    if (leaderboard.length >= 2) {
+      countdownInterval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev.minutes === 0 && prev.seconds === 0) {
+            // Time's up, refresh leaderboard
+            fetchLeaderboard()
+            return { minutes: 0, seconds: 0 }
+          }
 
-      try {
-        setIsLoading(true)
-        const data = await getLeaderboard()
+          if (prev.seconds === 0) {
+            return { minutes: prev.minutes - 1, seconds: 59 }
+          }
 
-        if (isMounted && data) {
-          setLeaderboard(data)
-        }
-      } catch (error) {
-        console.error("Error fetching leaderboard:", error)
-      } finally {
-        if (isMounted) setIsLoading(false)
-      }
+          return { minutes: prev.minutes, seconds: prev.seconds - 1 }
+        })
+      }, 1000)
     }
+
+    return () => {
+      isMounted = false
+      if (countdownInterval) clearInterval(countdownInterval)
+    }
+  }, [leaderboard])
+
+  const fetchLeaderboard = async () => {
+    if (isLoading) return
+
+    try {
+      setIsLoading(true)
+      const data = await getLeaderboard()
+
+      if (data && data.length >= 2) {
+        // Calculate time remaining between top two stakers
+        const timeObj = calculateTimeRemaining(data[0].stake, data[1].stake, 2.5)
+
+        // Update the countdown state
+        setCountdown(timeObj)
+
+        // Format the time for display
+        const formattedTime = `${timeObj.minutes}m ${timeObj.seconds}s`
+
+        // Update the first entry with the calculated time
+        data[0].timeRemaining = formattedTime
+        data[0].countdown = timeObj
+      }
+
+      // Round stake values to 2 decimal places
+      const roundedData = data.map((entry) => ({
+        ...entry,
+        stake: Number.parseFloat(entry.stake).toFixed(2),
+      }))
+
+      setLeaderboard(roundedData)
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    let isMounted = true
+    let leaderboardInterval: NodeJS.Timeout | null = null
 
     fetchLeaderboard()
 
-    // Set up interval to fetch data periodically (every 30 seconds)
-    const interval = setInterval(fetchLeaderboard, 30000)
+    // Set up interval to fetch data every 5 seconds
+    leaderboardInterval = setInterval(fetchLeaderboard, 5000)
 
     // Cleanup function
     return () => {
       isMounted = false
-      clearInterval(interval)
+      if (leaderboardInterval) clearInterval(leaderboardInterval)
     }
   }, [robotId])
 
-  // Fetch user stake separately
-  useEffect(() => {
-    if (!address) return
-
-    const fetchUserBalance = async () => {
-      try {
-        const balanceStr = await getUserBalance()
-        setUserStake(Number(parseFloat(balanceStr)))
-      } catch (error) {
-        console.error("Error fetching user balance:", error)
-      }
-    }
-
-    fetchUserBalance()
-
-    // Set up interval to fetch user balance periodically
-    const interval = setInterval(fetchUserBalance, 30000)
-
-    return () => clearInterval(interval)
-  }, [address, getUserBalance])
-
-  const handleStake = async () => {
-    const amount = Number.parseFloat(stakeAmount)
-    if (isNaN(amount) || amount <= 0) return
-
-    try {
-      await stakeTokens(stakeAmount)
-      setStakeAmount("")
-
-      // Refresh leaderboard and user stake after staking
-      const data = await getLeaderboard()
-      setLeaderboard(data)
-
-      if (address) {
-        const balanceStr = await getUserBalance()
-        setUserStake(Number(parseFloat(balanceStr)))
-      }
-    } catch (error) {
-      console.error("Error staking tokens:", error)
-    }
-  }
-
-  const handleUnstake = async () => {
-    try {
-      await withdrawTokens(userStake.toString())
-
-      // Refresh leaderboard and user stake after unstaking
-      const data = await getLeaderboard()
-      setLeaderboard(data)
-
-      if (address) {
-        const balanceStr = await getUserBalance()
-        setUserStake(Number(parseFloat(balanceStr)))
-      }
-    } catch (error) {
-      console.error("Error unstaking tokens:", error)
-    }
-  }
-
   return (
-    <Card className="flex flex-col h-[600px]">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Staking Leaderboard</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto p-3 space-y-4">
-        {leaderboard.map((stake, index) => {
-          const isCurrentUser = address && stake.address.toLowerCase().includes(address.toLowerCase().slice(2, 6))
-          const timeRemaining = stake.timeRemaining
+    <Card className="neo-card flex flex-col h-full">
+      <div className="p-2 flex flex-col h-full">
+        <h3 className="text-sm font-bold mb-1">Staking Leaderboard</h3>
+        <div className="flex-1 overflow-y-auto space-y-2 border rounded-md p-1">
+          {leaderboard.map((stake, index) => {
+            const isCurrentUser = address && stake.address.toLowerCase().includes(address.toLowerCase().slice(2, 6))
 
-          return (
-            <div
-              key={stake.address}
-              className={`flex justify-between items-center p-2 rounded-md ${
-                index === 0 ? "bg-orange-100 dark:bg-orange-900/30" : ""
-              } ${isCurrentUser ? "border border-orange-500" : ""}`}
-            >
-              <div className="flex items-center gap-2">
-                <div className="font-bold">{index + 1}</div>
-                <div className="flex flex-col">
-                  <span className={`font-medium ${index === 0 ? "text-orange-500" : ""}`}>
-                    {stake.address}
-                    {index === 0 && " (Controller)"}
-                    {isCurrentUser && " (You)"}
-                  </span>
-                  {index === 0 && timeRemaining && (
-                    <span className="text-xs text-muted-foreground">Time remaining: {timeRemaining}</span>
-                  )}
+            // Display live countdown for the top staker
+            const countdownDisplay =
+              index === 0 && countdown.minutes > 0 ? `${countdown.minutes}m ${countdown.seconds}s` : stake.timeRemaining
+
+            return (
+              <div
+                key={stake.address}
+                className={`flex justify-between items-center p-1 rounded-md ${
+                  index === 0 ? "bg-orange-100 dark:bg-orange-900/30" : ""
+                } ${isCurrentUser ? "border border-orange-500" : ""}`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="font-bold text-xs">{index + 1}</div>
+                  <div className="flex flex-col">
+                    <span className={`text-xs font-medium ${index === 0 ? "text-orange-500" : ""}`}>
+                      {stake.address}
+                      {index === 0 && " (Controller)"}
+                      {isCurrentUser && " (You)"}
+                    </span>
+                    {index === 0 && countdownDisplay && (
+                      <span className="text-[10px] text-muted-foreground">Time remaining: {countdownDisplay}</span>
+                    )}
+                  </div>
                 </div>
+                <div className="text-xs font-medium">{stake.stake} WND</div>
               </div>
-              <div className="font-medium">{stake.stake} DOT</div>
-            </div>
-          )
-        })}
+            )
+          })}
 
-        {leaderboard.length === 0 && !isLoading && (
-          <div className="text-center py-8 text-muted-foreground">No stakes yet. Be the first to stake!</div>
-        )}
+          {leaderboard.length === 0 && !isLoading && (
+            <div className="text-center py-8 text-xs text-muted-foreground">No stakes yet. Be the first to stake!</div>
+          )}
 
-        {isLoading && leaderboard.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">Loading leaderboard...</div>
-        )}
-      </CardContent>
-      <CardFooter className="flex flex-col p-3 gap-2">
-        <div className="text-sm mb-1">
-          Your stake: <span className="font-medium">{userStake.toFixed(2)} DOT</span>
+          {isLoading && leaderboard.length === 0 && (
+            <div className="text-center py-8 text-xs text-muted-foreground">Loading leaderboard...</div>
+          )}
         </div>
-        <div className="flex gap-2 w-full">
-          <Input
-            type="number"
-            placeholder="Amount to stake"
-            value={stakeAmount}
-            onChange={(e) => setStakeAmount(e.target.value)}
-            className="flex-1"
-          />
-          <Button onClick={handleStake} className="bg-orange-500 hover:bg-orange-600">
-            Stake
-          </Button>
-        </div>
-        {userStake > 0 && (
-          <Button variant="outline" onClick={handleUnstake} className="w-full">
-            Unstake All
-          </Button>
-        )}
-      </CardFooter>
+      </div>
     </Card>
   )
 }

@@ -1,28 +1,28 @@
+"use client"
 
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useAccount } from "wagmi";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Users, Clock } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSearchParams } from "react-router-dom";
+import { Card } from "@/components/ui/card"
+import { useAccount } from "wagmi"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { Users, Clock } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useSearchParams } from "react-router-dom"
 
 interface RobotCameraFeedProps {
-  robotId?: string;
-  robotName?: string;
-  viewerCount?: number;
-  chargeRate?: number;
+  robotId?: string
+  robotName?: string
+  viewerCount?: number
+  chargeRate?: number
 }
 
-export const RobotCameraFeed = ({ 
+export const RobotCameraFeed = ({
   robotId = "robot-1",
-  robotName = "Warehouse Bot Alpha", 
+  robotName = "Warehouse Bot Alpha",
   viewerCount = 5,
-  chargeRate = 2.5
+  chargeRate = 2.5,
 }: RobotCameraFeedProps) => {
-  const { isConnected } = useAccount();
-  const [searchParams, setSearchParams] = useSearchParams();
-  
+  const { isConnected } = useAccount()
+  const [searchParams, setSearchParams] = useSearchParams()
+
   const robots = [
     { id: "robot-1", name: "Warehouse Bot Alpha" },
     { id: "robot-2", name: "Garden Maintenance Bot" },
@@ -30,11 +30,11 @@ export const RobotCameraFeed = ({
     { id: "robot-4", name: "Delivery Bot" },
     { id: "robot-5", name: "Assembly Line Bot" },
     { id: "robot-6", name: "Cleaning Bot" },
-  ];
+  ]
 
   const handleRobotChange = (value) => {
-    setSearchParams({ robot: value });
-  };
+    setSearchParams({ robot: value })
+  }
 
   return (
     <Card className="neo-card p-3 mb-4 overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -53,7 +53,7 @@ export const RobotCameraFeed = ({
             </SelectContent>
           </Select>
         </div>
-        
+
         {isConnected && (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-sm">
@@ -62,7 +62,7 @@ export const RobotCameraFeed = ({
             </div>
             <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full">
               <Clock className="h-4 w-4 text-orange-400" />
-              <span className="font-semibold text-orange-400">{chargeRate} WND/hr</span>
+              <span className="font-semibold text-orange-400">{chargeRate} WND/min</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 soft-pulse"></div>
@@ -71,13 +71,13 @@ export const RobotCameraFeed = ({
           </div>
         )}
       </div>
-      
+
       <div className="relative aspect-video bg-black/70 rounded-md overflow-hidden transition-transform duration-300 transform hover:scale-[1.01]">
         {isConnected ? (
           <>
             <div className="absolute inset-0 grid-pattern opacity-20"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e" 
+            <img
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e"
               alt="Robot camera feed"
               className="w-full h-full object-cover"
             />
@@ -106,5 +106,5 @@ export const RobotCameraFeed = ({
         )}
       </div>
     </Card>
-  );
-};
+  )
+}

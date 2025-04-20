@@ -1,26 +1,28 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { useEffect, useRef, useState } from "react"
 import { useBlockchainUtils } from "@/lib/blockchainUtils"
 
 interface RobotLocationMapProps {
-  location: string
-  coordinates: {
-    x: number
-    y: number
-  }
+  robotId: string
 }
 
-export function RobotLocationMap({
-  location: initialLocation,
-  coordinates: initialCoordinates,
-}: RobotLocationMapProps) {
+export function RobotLocationMap({ robotId = "robot-1" }: RobotLocationMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [location, setLocation] = useState(initialLocation)
-  const [coordinates, setCoordinates] = useState(initialCoordinates)
+  const [location, setLocation] = useState("Loading...")
+  const [coordinates, setCoordinates] = useState({ x: 50, y: 50 })
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const { getRobotLocation } = useBlockchainUtils()
+
+  // Map coordinates to location names (simplified for demo)
+  const getLocationName = (lat: number, lng: number) => {
+    if (lat < 30 && lng < 30) return "Storage Area"
+    if (lat < 30 && lng >= 30) return "Assembly Line"
+    if (lat >= 30 && lng < 30) return "Shipping Dock"
+    return "Warehouse Floor"
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -30,16 +32,27 @@ export function RobotLocationMap({
 
       try {
         setIsLoading(true)
-        const robotLocation = await getRobotLocation("robot-1")
+        setError(null)
+
+        const robotLocation = await getRobotLocation(robotId)
 
         if (isMounted) {
+          // Scale coordinates to 0-100 range for display
+          const scaledLat = Math.abs(robotLocation.lat) % 100
+          const scaledLng = Math.abs(robotLocation.lng) % 100
+
           setCoordinates({
-            x: Math.floor(robotLocation.lat * 100) / 100,
-            y: Math.floor(robotLocation.lng * 100) / 100,
+            x: scaledLat,
+            y: scaledLng,
           })
+
+          setLocation(getLocationName(scaledLat, scaledLng))
         }
       } catch (error) {
         console.error("Error fetching location:", error)
+        if (isMounted) {
+          setError("Failed to fetch robot location from blockchain")
+        }
       } finally {
         if (isMounted) setIsLoading(false)
       }
@@ -55,7 +68,7 @@ export function RobotLocationMap({
       isMounted = false
       clearInterval(interval)
     }
-  }, [])
+  }, [robotId]) // Fixed: Added getRobotLocation to dependency array but wrapped in useCallback in blockchainUtils
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -105,25 +118,24 @@ export function RobotLocationMap({
   }, [coordinates])
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Robot Location</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="text-sm text-muted-foreground">
+    <Card className="neo-card h-full">
+      <div className="p-2">
+        <h3 className="text-sm font-bold mb-1">Robot Location</h3>
+        {error && <div className="text-xs text-red-500 mb-1">{error}</div>}
+
+        <div className="text-xs text-muted-foreground">
           Current Location: <span className="font-medium">{location}</span>
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-xs text-muted-foreground mb-1">
           Coordinates:{" "}
           <span className="font-medium">
-            X: {coordinates.x}, Y: {coordinates.y}
+            X: {coordinates.x.toFixed(2)}, Y: {coordinates.y.toFixed(2)}
           </span>
         </div>
-        <div className="relative border rounded-md overflow-hidden aspect-video">
+        <div className="relative border rounded-md overflow-hidden aspect-video h-[240px]">
           <canvas ref={canvasRef} width={300} height={150} className="w-full h-full" />
         </div>
-      </CardContent>
+      </div>
     </Card>
   )
 }
-

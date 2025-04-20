@@ -44,10 +44,7 @@ export const LiveLogFeed = () => {
             `Control verified`,
           ]
           const randomEvent = eventTypes[Math.floor(Math.random() * eventTypes.length)]
-          setLogs(prev => [
-            { time: formatTime(new Date()), action: randomEvent },
-            ...prev.slice(0, 19),
-          ])
+          setLogs((prev) => [{ time: formatTime(new Date()), action: randomEvent }, ...prev.slice(0, 19)])
         }
       } catch (error) {
         console.error("Error fetching live log event:", error)
@@ -69,11 +66,11 @@ export const LiveLogFeed = () => {
       className="w-full transition-all duration-300 ease-in-out mb-4"
     >
       <Card className={`neo-card overflow-hidden transition-all duration-300 ${isExpanded ? "h-auto" : "h-16"}`}>
-        <div className={`p-4 ${isExpanded ? "" : "py-1"}`}>
+        <div className={`p-2 ${isExpanded ? "" : "py-1"}`}>
           <CollapsibleTrigger asChild>
             <div className="flex justify-between items-center cursor-pointer py-2">
               <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-medium">Live Activity Log</h3>
+                <h3 className="text-sm font-bold">Live Activity Log</h3>
               </div>
               <Button
                 variant="ghost"
@@ -85,17 +82,17 @@ export const LiveLogFeed = () => {
             </div>
           </CollapsibleTrigger>
 
-          <CollapsibleContent className="mt-2">
+          <CollapsibleContent className="mt-1">
             <ScrollArea className="h-[200px] rounded-md border">
-              <div className="p-2">
+              <div className="p-1">
                 {logs.map((log, index) => (
                   <div
                     key={index}
-                    className={`py-2 px-3 ${index % 2 === 0 ? "bg-background/60" : "bg-background/30"} 
+                    className={`py-1 px-2 ${index % 2 === 0 ? "bg-background/60" : "bg-background/30"} 
                       rounded-md mb-1 flex justify-between items-center`}
                   >
-                    <span className="text-sm font-mono text-muted-foreground">{log.time}</span>
-                    <span className="text-sm">{log.action}</span>
+                    <span className="text-xs font-mono text-muted-foreground">{log.time}</span>
+                    <span className="text-xs">{log.action}</span>
                   </div>
                 ))}
               </div>
